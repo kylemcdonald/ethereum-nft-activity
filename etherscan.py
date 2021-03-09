@@ -39,6 +39,8 @@ class Etherscan():
         """
         if address in blocklist:
             return []
+        if verbose:
+            print(address)
         fn = os.path.join(self.cache_dir, address + '.json')
         startblock = None
         transactions = []
