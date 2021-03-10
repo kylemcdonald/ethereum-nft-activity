@@ -49,9 +49,10 @@ class Etherscan():
                 transactions = json.load(f)
             if not update:
                 return transactions
-            startblock = max([int(e['blockNumber']) for e in transactions])
-            if verbose:
-                print('starting at', startblock, 'with', len(transactions))
+            if len(transactions):
+                startblock = max([int(e['blockNumber']) for e in transactions])
+                if verbose:
+                    print('starting at', startblock, 'with', len(transactions))
         # add new transactions
         transactions.extend(self.fetch_transactions(address, startblock=startblock, verbose=verbose, **kwargs))
         # dedupe

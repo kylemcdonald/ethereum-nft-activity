@@ -4,19 +4,19 @@ Estimate the total CO2 footprint for popular CryptoArt platforms. The goal is to
 
 To estimate the footprint for a specific Ethereum wallet or contract (up to 10,000 transactions) try [carbon.fyi](https://carbon.fyi/). To estimate the footprint of a specific artwork try [cryptoart.wtf](http://cryptoart.wtf/).
 
-Status as of March 8, 2021:
+Status as of March 9, 2021:
 
-| Platform      	| Gas             	| Transactions 	| kgCO2      	|
-|---------------	|-----------------	|--------------	|------------	|
-| OpenSea       	| 143,595,457,124 	|      650,670 	| 45,538,734 	|
-| Nifty Gateway 	|  22,066,205,976 	|       80,700 	|  8,317,022 	|
-| Rarible       	|  20,481,970,952 	|      162,561 	|  6,593,793 	|
-| Makersplace   	|  20,085,695,013 	|       64,142 	|  5,403,452 	|
-| SuperRare     	|  13,477,071,163 	|      147,399 	|  3,877,450 	|
-| Foundation    	|   3,238,001,997 	|       20,239 	|  1,570,449 	|
-| Known Origin  	|   4,430,905,450 	|       18,110 	|  1,341,819 	|
-| Zora          	|   1,315,299,735 	|        4,859 	|    583,004 	|
-| Async         	|   1,413,941,801 	|       14,404 	|    350,863 	|
+| Name          | Gas             | Transactions | kgCO2      |
+|---------------|-----------------|--------------|------------|
+| OpenSea       | 146,210,589,984 |      663,946 | 46,882,237 |
+| Nifty Gateway |  22,692,781,162 |       82,920 |  8,638,915 |
+| Rarible       |  21,336,740,026 |      169,149 |  7,032,924 |
+| Makersplace   |  20,254,567,543 |       64,625 |  5,490,208 |
+| SuperRare     |  14,816,160,348 |      160,293 |  4,449,347 |
+| Foundation    |   3,650,433,860 |       23,003 |  1,782,331 |
+| Known Origin  |   4,457,508,470 |       18,223 |  1,355,487 |
+| Zora          |   1,399,949,616 |        5,231 |    626,492 |
+| Async         |   1,439,494,155 |       14,523 |    363,991 |
 
 ## Run
 
@@ -26,7 +26,12 @@ Then run the script: `python cryptoart-footprint.py > footprint.tsv`
 
 This may take longer the first time, while your local cache is updated.
 
-To also estimate the footprint for Nifty Gateway, add the `--ng` flag. This takes much longer than other platforms, because Nifty Gateway uses a separate smart contract per exhibition/drop.
+Additional flags:
+
+* `--ng` to also estimate the footprint for Nifty Gateway. This takes much longer than other platforms, because Nifty Gateway uses a separate smart contract per exhibition/drop.
+* `--summary` to summarize the results in a format similar to the above table, combining multiple contracts into a single row of output.
+* `--commas` to print the output with thousands comma separators.
+* `--verbose` prints progress when scraping Nifty Gateway or pulling transactions from Etherscan. 
 
 ## Methodology
 
@@ -37,6 +42,13 @@ The footprint of a platform is the sum of the footprints for all artwork on the 
 3. The total gas used during that day, measured by [Etherscan](https://etherscan.io/chart/gasused?output=csv).
 
 The total kgCO2 for a platform is equal to the sum of the gas used for each transaction times the kgCO2/gas on that day. Finally, we add 20% to handle "network inefficiencies and unnaccounted for mining pools" [as described by Offsetra](https://www.notion.so/Carbon-FYI-Methodology-51e2d8c41d1c4963970a143b8629f5f9).
+
+## Sources
+
+When possible, we have confirmed contract coverage directly with the marketplaces. Confirmed contracts include:
+
+* SuperRare
+* Foundation
 
 ### Limitations
 
