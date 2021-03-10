@@ -20,9 +20,17 @@ Status as of March 8, 2021:
 
 ## Run
 
-First, sign up for an API key at Etherscan. Add the API key to `env.json`. Install requests `pip install requests` if it is not already available.
+First, sign up for an API key at [Etherscan](https://etherscan.io/myapikey). Create `env.json` and add the API key. It should look like:
 
-Then run the script: `python cryptoart-emissions.py > emissions.tsv`
+```json
+{
+    "etherscan-api-key": "<etherscan-api-key>"
+}
+```
+
+Install requests `pip install requests` if it is not already available.
+
+Then run the script: `python cryptoart_emissions.py > emissions.tsv`
 
 This may take longer the first time, while your local cache is updated.
 
