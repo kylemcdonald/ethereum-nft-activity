@@ -10,7 +10,7 @@ def read_csv(fn):
         for row in reader:
             yield row
 
-class EthereumEmissions():
+class EthereumFootprint():
     """
     Load the energy estimate from Digiconomist, and the gas
     measurement from Etherscan. Add some overhead like Offsetra.

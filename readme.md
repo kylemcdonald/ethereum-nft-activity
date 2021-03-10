@@ -1,8 +1,8 @@
-# cryptoart-emissions
+# cryptoart-footprint
 
-Estimate the total emissions for popular CryptoArt platforms. The goal is to accurately quantify the ecological damage of Ethereum 1.0 PoW-backed CryptoArt platforms.
+Estimate the total CO2 footprint for popular CryptoArt platforms. The goal is to accurately quantify the ecological damage of Ethereum 1.0 PoW-backed CryptoArt platforms.
 
-To estimate the emissions for a specific Ethereum wallet or contract (up to 10,000 transactions) try [carbon.fyi](https://carbon.fyi/). To estimate the emissions of a specific artwork try [cryptoart.wtf](http://cryptoart.wtf/).
+To estimate the footprint for a specific Ethereum wallet or contract (up to 10,000 transactions) try [carbon.fyi](https://carbon.fyi/). To estimate the footprint of a specific artwork try [cryptoart.wtf](http://cryptoart.wtf/).
 
 Status as of March 8, 2021:
 
@@ -22,15 +22,15 @@ Status as of March 8, 2021:
 
 First, sign up for an API key at Etherscan. Add the API key to `env.json`. Install requests `pip install requests` if it is not already available.
 
-Then run the script: `python cryptoart-emissions.py > emissions.tsv`
+Then run the script: `python cryptoart-footprint.py > footprint.tsv`
 
 This may take longer the first time, while your local cache is updated.
 
-To also estimate the emissions for Nifty Gateway, add the `--ng` flag. This takes much longer than other platforms, because Nifty Gateway uses a separate smart contract per exhibition/drop.
+To also estimate the footprint for Nifty Gateway, add the `--ng` flag. This takes much longer than other platforms, because Nifty Gateway uses a separate smart contract per exhibition/drop.
 
 ## Methodology
 
-The emissions of a platform is the sum of the emissions for all artwork on the platform. Most platforms use a few Ethereum contracts to handle all artworks. For each contract, we download all the transactions associated with the contract from Etherscan. Then for each transaction, we compute the kgCO2/gas emissions for that day, based on three values:
+The footprint of a platform is the sum of the footprints for all artwork on the platform. Most platforms use a few Ethereum contracts to handle all artworks. For each contract, we download all the transactions associated with the contract from Etherscan. Then for each transaction, we compute the kgCO2/gas footprint for that day, based on three values:
 
 1. The emissions intensity in kgCO2/kWh for the entire Ethereum network. This is an average of the emissions intensity for each mining pool in 2019, weighted by their percentage of the hashrate.
 2. The total power used during that day, estimated by [Digiconomist](https://digiconomist.net/ethereum-energy-consumption/).
