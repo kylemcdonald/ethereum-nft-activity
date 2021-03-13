@@ -30,7 +30,7 @@ First, sign up for an API key at [Etherscan](https://etherscan.io/myapikey). Cre
 
 Install requests `pip install requests` if it is not already available.
 
-Then run the script: `python cryptoart-footprint.py > footprint.tsv`
+Then run the script: `python cryptoart_footprint.py > footprint.tsv`
 
 This may take longer the first time, while your local cache is updated.
 
