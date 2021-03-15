@@ -25,8 +25,8 @@ summary = defaultdict(lambda: defaultdict(int))
 if not args.summary:
     print(f'Name\tKind\tAddress\tGas\tTransactions\tkgCO2')
 
-output = {}
-output['data'] = []
+output_json = {}
+output_json['data'] = []
 for name_kind, address in contracts.items():
     if name_kind == 'Nifty Gateway/multiple':
         if args.ng:
@@ -51,7 +51,7 @@ for name_kind, address in contracts.items():
             "transactions": len(transactions),
             "kgco2": kgco2
         }
-        output['data'].append(row)
+        output_json['data'].append(row)
 
         if args.commas:
             print(f'{name}\t{kind}\t{address}\t{gas:,}\t{len(transactions):,}\t{kgco2:,}')
@@ -66,4 +66,4 @@ if args.summary:
         kgco2 = summary[name]['kgco2']
         print(f'{name}\t{gas:,}\t{transactions:,}\t{kgco2:,}')
 
-write_results(output)
+write_results(output_json)
