@@ -26,21 +26,25 @@ output_json = {}
 output_json['data'] = []
 
 def load_transactions():
-    if name_kind == 'Nifty Gateway/multiple' and args.ng:
+    if name_kind == 'Nifty Gateway/multiple':
         transactions = etherscan.load_transactions_multiple(list_nifty_gateway(args.verbose), verbose=args.verbose)
     else:
         transactions = etherscan.load_transactions(address, verbose=args.verbose)
     return transactions
 
 for name_kind, address in contracts.items():
-    transactions = load_transactions()
+    # Skip Nifty Gateway if user doesn't ask for it
+    if name_kind == 'Nifty Gateway/multiple' and not args.ng:
+        continue
 
+    transactions = load_transactions()
     gas = sum_gas(transactions)
     kgco2 = int(ethereum_footprint.sum_kgco2(transactions))
     name, kind = name_kind.split('/')
     summary[name]['gas'] += gas
     summary[name]['transactions'] += len(transactions)
     summary[name]['kgco2'] += kgco2
+
     if not args.summary:
         row = {
             "name": name,
@@ -60,7 +64,7 @@ if args.summary:
         row = {
             "name": name,
             "gas": gas,
-            "transactions": len(transactions),
+            "transactions": transactions,
             "kgco2": kgco2
         }
         output_json['data'].append(row)
