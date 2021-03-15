@@ -30,7 +30,7 @@ First, sign up for an API key at [Etherscan](https://etherscan.io/myapikey). Cre
 
 Install requests `pip install requests` if it is not already available.
 
-Then run the script: `python cryptoart_footprint.py`
+Then run the script: `python cryptoart_footprint.py`. This will run the calculations and save current emissions data to `/output` directory in JSON.
 
 This may take longer the first time, while your local cache is updated.
 
