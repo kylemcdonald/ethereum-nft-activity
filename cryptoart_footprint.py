@@ -47,12 +47,12 @@ for name_kind, address in contracts.items():
 
     if not args.summary:
         row = {
-            "name": name,
-            "kind": kind,
-            "address": address,
-            "gas": gas,
-            "transactions": len(transactions),
-            "kgco2": kgco2
+            'name': name,
+            'kind': kind,
+            'address': address,
+            'gas': gas,
+            'transactions': len(transactions),
+            'kgco2': kgco2
         }
         output_json['data'].append(row)
 
@@ -62,10 +62,10 @@ if args.summary:
         transactions = summary[name]['transactions']
         kgco2 = summary[name]['kgco2']
         row = {
-            "name": name,
-            "gas": gas,
-            "transactions": transactions,
-            "kgco2": kgco2
+            'name': name,
+            'gas': gas,
+            'transactions': transactions,
+            'kgco2': kgco2
         }
         output_json['data'].append(row)
 
