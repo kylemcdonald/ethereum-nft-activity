@@ -30,7 +30,7 @@ First, sign up for an API key at [Etherscan](https://etherscan.io/myapikey). Cre
 
 Install requests `pip install requests` if it is not already available.
 
-Then run the script: `python cryptoart_footprint.py > footprint.tsv`
+Then run the script: `python cryptoart_footprint.py`
 
 This may take longer the first time, while your local cache is updated.
 
@@ -38,8 +38,7 @@ Additional flags:
 
 * `--ng` to also estimate the footprint for Nifty Gateway. This takes much longer than other platforms, because Nifty Gateway uses a separate smart contract per exhibition/drop.
 * `--summary` to summarize the results in a format similar to the above table, combining multiple contracts into a single row of output.
-* `--commas` to print the output with thousands comma separators.
-* `--verbose` prints progress when scraping Nifty Gateway or pulling transactions from Etherscan. 
+* `--verbose` prints progress when scraping Nifty Gateway or pulling transactions from Etherscan.
 
 ## Methodology
 
