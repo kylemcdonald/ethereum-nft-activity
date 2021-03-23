@@ -26,6 +26,15 @@ def sum_gas(transactions, start_date=None, end_date=None):
         gas += etherscan_gas(tx)
     return gas
 
+def safe_dump(fn, obj):
+    with open(fn, 'w') as f:
+        try:
+            json.dump(obj, f)
+        except:
+            # truncate files instead of writing corrupt json
+            f.truncate()
+            raise
+
 class Etherscan():
     def __init__(self, apikey, cache_dir='cache'):
         self.apikey = apikey
@@ -46,7 +55,10 @@ class Etherscan():
         transactions = []
         if os.path.exists(fn):
             with open(fn) as f:
-                transactions = json.load(f)
+                try:
+                    transactions = json.load(f)
+                except json.decoder.JSONDecodeError:
+                    pass
             if not update:
                 return transactions
             if len(transactions):
@@ -57,8 +69,7 @@ class Etherscan():
         transactions.extend(self.fetch_transactions(address, startblock=startblock, verbose=verbose, **kwargs))
         # dedupe
         transactions = list({e['hash']:e for e in transactions}.values())
-        with open(fn, 'w') as f:
-            json.dump(transactions, f)
+        safe_dump(fn, transactions)
         return transactions
 
     def fetch_transactions_in_range(self, address, startblock, endblock):
