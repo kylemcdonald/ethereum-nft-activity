@@ -2,6 +2,7 @@ import datetime
 import csv
 from nearest_dict import NearestDict
 from etherscan import etherscan_gas, etherscan_timestamp
+import requests
 
 def read_csv(fn):
     with open(fn) as f:
@@ -38,6 +39,7 @@ class EthereumFootprint():
         self.date_to_kwh = NearestDict(date_to_kwh)
 
         # https://etherscan.io/chart/gasused?output=csv
+        self.get_etherscan_data()
         date_to_gas = {}
         for date, timestamp, gas in read_csv('data/export-GasUsed.csv'):
             date = datetime.datetime.strptime(date, '%m/%d/%Y').date()
@@ -56,3 +58,13 @@ class EthereumFootprint():
             gas = etherscan_gas(tx)
             kgco2 += self.kgco2_per_gas(date) * gas
         return kgco2
+
+    def get_etherscan_data(self):
+        # replaces export-GasUsed.csv each time run
+        url = 'https://etherscan.io/chart/gasused?output=csv'
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36'}
+
+        etherscan_response = requests.get(url, headers=headers)
+
+        with open('data/export-GasUsed.csv', 'w') as file:
+            file.write(etherscan_response.content.decode())
