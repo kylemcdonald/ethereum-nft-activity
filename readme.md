@@ -4,19 +4,19 @@ Estimate the total CO2 footprint for popular CryptoArt platforms. The goal is to
 
 To estimate the footprint for a specific Ethereum wallet or contract (up to 10,000 transactions) try [carbon.fyi](https://carbon.fyi/). To estimate the footprint of a specific artwork try [cryptoart.wtf](http://cryptoart.wtf/).
 
-Status as of March 9, 2021:
+Status as of March 22, 2021:
 
 | Name          | Gas             | Transactions | kgCO2      |
 |---------------|-----------------|--------------|------------|
-| OpenSea       | 146,210,589,984 |      663,946 | 46,882,237 |
-| Nifty Gateway |  22,692,781,162 |       82,920 |  8,638,915 |
-| Rarible       |  21,336,740,026 |      169,149 |  7,032,924 |
-| Makersplace   |  20,254,567,543 |       64,625 |  5,490,208 |
-| SuperRare     |  14,816,160,348 |      160,293 |  4,449,347 |
-| Foundation    |   3,650,433,860 |       23,003 |  1,782,331 |
-| Known Origin  |   4,457,508,470 |       18,223 |  1,355,487 |
-| Zora          |   1,399,949,616 |        5,231 |    626,492 |
-| Async         |   1,439,494,155 |       14,523 |    363,991 |
+| OpenSea       | 173,618,258,189 |      804,476 | 60,962,694 |
+| Nifty Gateway |  31,925,160,353 |      116,531 | 13,381,972 |
+| Rarible       |  27,700,791,937 |      216,407 | 10,302,402 |
+| Makersplace   |  21,679,291,384 |       69,165 |  6,222,148 |
+| SuperRare     |  15,950,212,376 |      171,967 |  5,031,957 |
+| Foundation    |   8,169,344,070 |       51,375 |  4,103,883 |
+| Known Origin  |   4,677,980,129 |       19,181 |  1,468,752 |
+| Zora          |   1,871,937,838 |        7,137 |    868,972 |
+| Async         |   1,502,889,319 |       15,081 |    396,560 |
 
 ## Run
 
@@ -62,3 +62,56 @@ When possible, we have confirmed contract coverage directly with the marketplace
 
 * Digiconomist's Bitcoin estimates [have been criticized](https://www.coincenter.org/estimating-bitcoin-electricity-use-a-beginners-guide/) as low (5x too low) or high (2x too high) compared to other estimates. It may be possible to make a more accurate estimate for Ethereum following a different methodology, based on the available mining hardware and corresponding power usage. That said, even the official Ethereum website [references Digiconomist](https://ethereum.org/en/nft/#footnotes-and-sources) when discussing the power usage.
 * Mining pool locations and the corresponding emissions intensity may have changed significantly from the 2019 values. A full correction might correspond to a +/-50% change.
+
+## Contracts and Addresses
+
+Contracts and addresses used by each platform can be found in `data/contracts.json` and are also listed here using `python print_contracts.py` to generate Markdown.
+
+### Async
+
+* [ASYNC](https://etherscan.io/address/0x6c424c25e9f1fff9642cb5b7750b0db7312c29ad)
+* [ASYNC-V2](https://etherscan.io/address/0xb6dae651468e9593e4581705a09c10a76ac1e0c8)
+
+### Foundation
+
+* [ERC-721](https://etherscan.io/address/0xcda72070e455bb31c7690a170224ce43623d0b6f)
+* [FND NFT (FNDNFT) ERC-20](https://etherscan.io/address/0x3b3ee1931dc30c1957379fac9aba94d1c48a5405)
+
+### Known Origin
+
+* [KnownOriginDigitalAsset (KODA)](https://etherscan.io/address/0xfbeef911dc5821886e1dda71586d90ed28174b7d)
+
+### Makersplace
+
+* [MakersTokenV2 (MKT2)](https://etherscan.io/address/0x2a46f2ffd99e19a89476e2f62270e0a35bbf0756)
+
+### Nifty Gateway
+
+Uses many separate contracts.
+
+### OpenSea
+
+* [OpenSea Shared Storefront (OPENSTORE)](https://etherscan.io/address/0x495f947276749ce646f68ac8c248420045cb7b5e)
+* [OpenSea Token (OPT)](https://etherscan.io/address/0x1129eb10812935593bf44fe0a9b62a59a9202f6d)
+* [OpenSeaENSResolver](https://etherscan.io/address/0x9c4e9cce4780062942a7fe34fa2fa7316c872956)
+* [Wallet](https://etherscan.io/address/0x5b3256965e7c3cf26e11fcaf296dfc8807c01073)
+* [Wyvern Exchange](https://etherscan.io/address/0x7be8076f4ea4a4ad08075c2508e481d6c946d12b)
+* [WyvernProxyRegistry](https://etherscan.io/address/0xa5409ec958c83c3f309868babaca7c86dcb077c1)
+
+### Rarible
+
+* [MintableToken (RARI)](https://etherscan.io/address/0x60f80121c31a0d46b5279700f9df786054aa5ee5)
+* [RariToken (RARI)](https://etherscan.io/address/0xfca59cd816ab1ead66534d82bc21e7515ce441cf)
+
+### SuperRare
+
+* [Bids](https://etherscan.io/address/0x2947f98c42597966a0ec25e92843c09ac17fbaa7)
+* [SupeRare (SUPR)](https://etherscan.io/address/0x41a322b28d0ff354040e2cbc676f0320d8c8850d)
+* [SuperRareV2 (SUPR)](https://etherscan.io/address/0xb932a70a57673d89f4acffbe830e8ed7f75fb9e0)
+* [Unknown 1](https://etherscan.io/address/0x65b49f7aee40347f5a90b714be4ef086f3fe5e2c)
+* [Unknown 2](https://etherscan.io/address/0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656)
+
+### Zora
+
+* [Market](https://etherscan.io/address/0xe5bfab544eca83849c53464f85b7164375bdaac1)
+* [Media (ZORA)](https://etherscan.io/address/0xabefbc9fd2f806065b4f3c237d4b59d9a97bcac7)
