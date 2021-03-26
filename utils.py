@@ -6,7 +6,7 @@ def load_etherscan_api_key():
         payload = json.load(file)
         return payload['etherscan-api-key']
 
-def load_contacts():
+def load_contracts():
     with open('data/contracts.json') as file:
         return json.load(file)
 

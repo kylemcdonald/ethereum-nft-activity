@@ -5,7 +5,7 @@ from collections import defaultdict
 from etherscan import Etherscan, sum_gas
 from ethereum_footprint import EthereumFootprint
 from nifty_gateway import list_nifty_gateway
-from utils import load_contacts, load_etherscan_api_key, write_results
+from utils import load_contracts, load_etherscan_api_key, write_results
 
 parser = argparse.ArgumentParser(description='Estimate emissions footprint for CryptoArt platforms.')
 parser.add_argument('--ng', action='store_true', help='Estimate footprint for Nifty Gateway.')
@@ -15,7 +15,7 @@ parser.add_argument('--verbose', action='store_true', help='Verbose mode.')
 args = parser.parse_args()
 
 api_key = load_etherscan_api_key()
-contracts = load_contacts()
+contracts = load_contracts()
 
 etherscan = Etherscan(api_key)
 ethereum_footprint = EthereumFootprint()
