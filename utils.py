@@ -4,7 +4,7 @@ import datetime
 def load_etherscan_api_key():
     with open('env.json') as file:
         payload = json.load(file)
-        return payload['etherscan-api-key']
+    return payload['etherscan-api-key']
 
 def load_contracts():
     with open('data/contracts.json') as file:
