@@ -4,19 +4,19 @@ Estimate the total CO2 footprint for popular CryptoArt platforms. The goal is to
 
 To estimate the footprint for a specific Ethereum wallet or contract try [carbon.fyi](https://carbon.fyi/). To estimate the footprint of a specific artwork try [cryptoart.wtf](http://cryptoart.wtf/).
 
-Status as of March 22, 2021:
+Status as of March 31, 2021:
 
-| Name          | Gas             | Transactions | kgCO2      |
-|---------------|-----------------|--------------|------------|
-| OpenSea       | 173,618,258,189 |      804,476 | 60,962,694 |
-| Nifty Gateway |  31,925,160,353 |      116,531 | 13,381,972 |
-| Rarible       |  27,700,791,937 |      216,407 | 10,302,402 |
-| Makersplace   |  21,679,291,384 |       69,165 |  6,222,148 |
-| SuperRare     |  15,950,212,376 |      171,967 |  5,031,957 |
-| Foundation    |   8,169,344,070 |       51,375 |  4,103,883 |
-| Known Origin  |   4,677,980,129 |       19,181 |  1,468,752 |
-| Zora          |   1,871,937,838 |        7,137 |    868,972 |
-| Async         |   1,502,889,319 |       15,081 |    396,560 |
+| Name          |             Gas | Transactions | kgCO2      |
+|---------------|----------------:|--------------|------------|
+| OpenSea       | 187,019,150,192 |      869,077 | 67,824,222 |
+| Nifty Gateway |  35,830,656,900 |      130,904 | 15,382,066 |
+| Rarible       |  31,185,627,251 |      242,597 | 12,087,788 |
+| Makersplace   |  22,264,728,788 |       71,063 |  6,520,751 |
+| Foundation    |  11,196,425,299 |       69,507 |  5,654,520 |
+| SuperRare     |  16,711,722,406 |      179,922 |  5,422,274 |
+| Known Origin  |   4,820,453,693 |       19,808 |  1,541,641 |
+| Zora          |   2,045,463,629 |         7910 |    958,056 |
+| Async         |   1,548,089,677 |       15,647 |    419,754 |
 
 ## Run
 
