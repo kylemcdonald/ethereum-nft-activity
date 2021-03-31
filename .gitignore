@@ -1,5 +1,5 @@
 env.json
-cache/*
+cache*
 .ipynb_checkpoints
 __pycache__
 output/*
