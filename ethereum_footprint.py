@@ -51,14 +51,10 @@ class EthereumFootprint():
         kwh_per_gas = self.date_to_kwh[date] / self.date_to_gas[date]
         return self.overhead * self.kgco2_per_kwh * kwh_per_gas
 
-    def sum_kgco2(self, transactions, start_date=None, end_date=None):
+    def sum_kgco2(self, transactions):
         kgco2 = 0
         for tx in transactions:
             date = etherscan_timestamp(tx).date()
-            if start_date is not None and date < start_date:
-                continue
-            if end_date is not None and date >= end_date:
-                continue
             gas = etherscan_gas(tx)
             kgco2 += self.kgco2_per_gas(date) * gas
         return kgco2

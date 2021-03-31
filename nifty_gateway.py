@@ -1,8 +1,20 @@
 import requests
 import json
+import os
 from itertools import count
 
-def list_nifty_gateway(verbose=False):
+def valid_hash(hash):
+    return hash.startswith('0x') and len(hash) == 42
+    
+def list_nifty_gateway(update=True, verbose=False):
+    cache_fn = 'cache/nifty-gateway-contracts.json'
+
+    if not update and os.path.exists(cache_fn):
+        if verbose:
+            print('Loading Nifty Gateway contracts from cache...')
+        with open(cache_fn) as f:
+            return json.load(f)
+
     drop_contracts = []
     if verbose:
         print('Downloading from drops...')
@@ -31,5 +43,9 @@ def list_nifty_gateway(verbose=False):
         print('Done.')
 
     combined = set(exhibition_contracts + drop_contracts)
-    filtered = filter(lambda x: x.startswith('0x'), combined)
-    return list(filtered)
+    filtered = list(filter(valid_hash, combined))
+
+    with open(cache_fn, 'w') as f:
+        json.dump(filtered, f)
+
+    return filtered

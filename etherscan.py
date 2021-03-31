@@ -14,17 +14,21 @@ def etherscan_timestamp(tx):
 def etherscan_gas(tx):
     return int(tx['gasUsed'])
 
-def sum_gas(transactions, start_date=None, end_date=None):
-    gas = 0
+def filter_transactions(transactions, start_date=None, end_date=None):
+    if start_date is None and end_date is None:
+        return transactions
+    filtered = []
     for tx in transactions:
-        if start_date is not None or end_date is not None:
-            date = etherscan_timestamp(tx).date()
-            if start_date is not None and date < start_date:
-                continue
-            if end_date is not None and date >= end_date:
-                continue
-        gas += etherscan_gas(tx)
-    return gas
+        date = etherscan_timestamp(tx).date()
+        if start_date is not None and date < start_date:
+            continue
+        if end_date is not None and date >= end_date:
+            continue
+        filtered.append(tx)
+    return filtered
+
+def sum_gas(transactions):
+    return sum([etherscan_gas(tx) for tx in transactions])
 
 def safe_dump(fn, obj):
     with open(fn, 'w') as f:

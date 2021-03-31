@@ -2,3 +2,5 @@ env.json
 cache*
 .ipynb_checkpoints
 __pycache__
+output/*
+.idea

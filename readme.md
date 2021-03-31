@@ -2,7 +2,7 @@
 
 Estimate the total CO2 footprint for popular CryptoArt platforms. The goal is to accurately quantify the ecological damage of Ethereum 1.0 PoW-backed CryptoArt platforms.
 
-To estimate the footprint for a specific Ethereum wallet or contract (up to 10,000 transactions) try [carbon.fyi](https://carbon.fyi/). To estimate the footprint of a specific artwork try [cryptoart.wtf](http://cryptoart.wtf/).
+To estimate the footprint for a specific Ethereum wallet or contract try [carbon.fyi](https://carbon.fyi/). To estimate the footprint of a specific artwork try [cryptoart.wtf](http://cryptoart.wtf/).
 
 Status as of March 22, 2021:
 
@@ -30,7 +30,7 @@ First, sign up for an API key at [Etherscan](https://etherscan.io/myapikey). Cre
 
 Install requests `pip install requests` if it is not already available.
 
-Then run the script: `python cryptoart_footprint.py > footprint.tsv`
+Then run the script: `python cryptoart_footprint.py`. This will run the calculations and save current emissions data to `/output` directory in JSON.
 
 This may take longer the first time, while your local cache is updated.
 
@@ -38,8 +38,11 @@ Additional flags:
 
 * `--ng` to also estimate the footprint for Nifty Gateway. This takes much longer than other platforms, because Nifty Gateway uses a separate smart contract per exhibition/drop.
 * `--summary` to summarize the results in a format similar to the above table, combining multiple contracts into a single row of output.
-* `--commas` to print the output with thousands comma separators.
-* `--verbose` prints progress when scraping Nifty Gateway or pulling transactions from Etherscan. 
+* `--noupdate` runs from cached results. This will not make any requests to Nifty Gateway or Etherscan.
+* `--startdate` and `--enddate` can be used to only analyze a specific date range, using the format `YYYY-MM-DD`.
+* `--tsv` will save the results of analysis as a TSV file instead of JSON.
+* `--verbose` prints progress when scraping Nifty Gateway or pulling transactions from Etherscan.
+
 
 ## Methodology
 
@@ -49,7 +52,7 @@ The footprint of a platform is the sum of the footprints for all artwork on the 
 2. The total power used during that day, estimated by [Digiconomist](https://digiconomist.net/ethereum-energy-consumption/).
 3. The total gas used during that day, measured by [Etherscan](https://etherscan.io/chart/gasused?output=csv).
 
-The total kgCO2 for a platform is equal to the sum of the gas used for each transaction times the kgCO2/gas on that day. Finally, we add 20% to handle "network inefficiencies and unnaccounted for mining pools" [as described by Offsetra](https://www.notion.so/Carbon-FYI-Methodology-51e2d8c41d1c4963970a143b8629f5f9).
+The total kgCO2 for a platform is equal to the sum of the gas used for each transaction times the kgCO2/gas on that day. Finally, we add 20% to handle "network inefficiencies and unnaccounted for mining pools" [as described by Offsetra](https://www.notion.so/Carbon-FYI-Methodology-51e2d8c41d1c4963970a143b8629f5f9). Offsetra has since removed this 20% from their method.
 
 ## Sources
 
@@ -60,7 +63,7 @@ When possible, we have confirmed contract coverage directly with the marketplace
 
 ### Limitations
 
-* Digiconomist's Bitcoin estimates [have been criticized](https://www.coincenter.org/estimating-bitcoin-electricity-use-a-beginners-guide/) as low (5x too low) or high (2x too high) compared to other estimates. It may be possible to make a more accurate estimate for Ethereum following a different methodology, based on the available mining hardware and corresponding power usage. That said, even the official Ethereum website [references Digiconomist](https://ethereum.org/en/nft/#footnotes-and-sources) when discussing the power usage.
+* Digiconomist's Bitcoin estimates [have been criticized](https://www.coincenter.org/estimating-bitcoin-electricity-use-a-beginners-guide/) as low (5x too low) or high (2x too high) compared to other estimates. It may be possible to make a more accurate estimate for Ethereum following a different methodology, based on the available mining hardware and corresponding power usage. That said, even the official Ethereum website [references Digiconomist](https://ethereum.org/en/nft/#footnotes-and-sources) when discussing the power usage. Work on a more accurate bottom-up energy and emissions estimate for Ethereum is happening in [kylemcdonald/ethereum-energy](https://github.com/kylemcdonald/ethereum-energy).
 * Mining pool locations and the corresponding emissions intensity may have changed significantly from the 2019 values. A full correction might correspond to a +/-50% change.
 
 ## Contracts and Addresses
