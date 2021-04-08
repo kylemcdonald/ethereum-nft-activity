@@ -11,7 +11,13 @@ blocklist = [
 def etherscan_timestamp(tx):
     return datetime.datetime.fromtimestamp(int(tx['timeStamp']))
 
-def etherscan_gas(tx):
+def etherscan_gas_fees(tx):
+    return etherscan_gas_price(tx) * etherscan_gas_used(tx)
+
+def etherscan_gas_price(tx):
+    return int(tx['gasPrice'])
+
+def etherscan_gas_used(tx):
     return int(tx['gasUsed'])
 
 def filter_transactions(transactions, start_date=None, end_date=None):
@@ -27,8 +33,8 @@ def filter_transactions(transactions, start_date=None, end_date=None):
         filtered.append(tx)
     return filtered
 
-def sum_gas(transactions):
-    return sum([etherscan_gas(tx) for tx in transactions])
+def sum_gas_used(transactions):
+    return sum([etherscan_gas_used(tx) for tx in transactions])
 
 def safe_dump(fn, obj):
     with open(fn, 'w') as f:

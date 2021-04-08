@@ -3,7 +3,7 @@ import argparse
 import datetime
 from collections import defaultdict
 
-from etherscan import Etherscan, filter_transactions, sum_gas
+from etherscan import Etherscan, filter_transactions, sum_gas_used
 from ethereum_footprint import EthereumFootprint
 from nifty_gateway import list_nifty_gateway
 from utils import load_contracts, load_etherscan_api_key, write_results_tsv, write_results_json
@@ -53,7 +53,7 @@ for name_kind, address in contracts.items():
             verbose=args.verbose)
 
     transactions = filter_transactions(transactions, start_date, end_date)
-    gas = sum_gas(transactions)
+    gas = sum_gas_used(transactions)
     kgco2 = int(ethereum_footprint.sum_kgco2(transactions))
     name, kind = name_kind.split('/')
     summary[name]['gas'] += gas

@@ -1,7 +1,7 @@
 import datetime
 import csv
 from nearest_dict import NearestDict
-from etherscan import etherscan_gas, etherscan_timestamp
+from etherscan import etherscan_gas_used, etherscan_timestamp
 import requests
 
 def read_csv(fn):
@@ -55,7 +55,7 @@ class EthereumFootprint():
         kgco2 = 0
         for tx in transactions:
             date = etherscan_timestamp(tx).date()
-            gas = etherscan_gas(tx)
+            gas = etherscan_gas_used(tx)
             kgco2 += self.kgco2_per_gas(date) * gas
         return kgco2
 
