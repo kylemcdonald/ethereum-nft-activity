@@ -72,49 +72,50 @@ Contracts and addresses used by each platform can be found in `data/contracts.js
 
 ### Async
 
-* [ASYNC](https://etherscan.io/address/0x6c424c25e9f1fff9642cb5b7750b0db7312c29ad)
-* [ASYNC-V2](https://etherscan.io/address/0xb6dae651468e9593e4581705a09c10a76ac1e0c8)
+* [ASYNC](https://etherscan.io/address/0x6c424c25e9f1fff9642cb5b7750b0db7312c29ad) 2020-02-25 to 2021-04-14
+* [ASYNC-V2](https://etherscan.io/address/0xb6dae651468e9593e4581705a09c10a76ac1e0c8) 2020-07-21 to 2021-04-14
 
 ### Foundation
 
-* [ERC-721](https://etherscan.io/address/0xcda72070e455bb31c7690a170224ce43623d0b6f)
-* [FND NFT (FNDNFT) ERC-20](https://etherscan.io/address/0x3b3ee1931dc30c1957379fac9aba94d1c48a5405)
+* [ERC-721](https://etherscan.io/address/0xcda72070e455bb31c7690a170224ce43623d0b6f) 2021-01-13 to 2021-04-14
+* [FND NFT (FNDNFT) ERC-20](https://etherscan.io/address/0x3b3ee1931dc30c1957379fac9aba94d1c48a5405) 2021-01-13 to 2021-04-14
 
 ### Known Origin
 
-* [KnownOriginDigitalAsset (KODA)](https://etherscan.io/address/0xfbeef911dc5821886e1dda71586d90ed28174b7d)
+* [KnownOriginDigitalAsset (KODA)](https://etherscan.io/address/0xfbeef911dc5821886e1dda71586d90ed28174b7d) 2018-09-04 to 2021-04-14
 
 ### Makersplace
 
-* [MakersTokenV2 (MKT2)](https://etherscan.io/address/0x2a46f2ffd99e19a89476e2f62270e0a35bbf0756)
+* [MakersTokenV2 (MKT2)](https://etherscan.io/address/0x2a46f2ffd99e19a89476e2f62270e0a35bbf0756) 2019-03-11 to 2021-04-14
 
 ### Nifty Gateway
 
-Uses many separate contracts.
+* [GUSD cashout](https://etherscan.io/address/0x3e6722f32cbe5b3c7bd3dca7017c7ffe1b9e5a2a) 2020-01-31 to 2021-04-14
+* Uses many separate contracts.
 
 ### OpenSea
 
-* [OpenSea Shared Storefront (OPENSTORE)](https://etherscan.io/address/0x495f947276749ce646f68ac8c248420045cb7b5e)
-* [OpenSea Token (OPT)](https://etherscan.io/address/0x1129eb10812935593bf44fe0a9b62a59a9202f6d)
-* [OpenSeaENSResolver](https://etherscan.io/address/0x9c4e9cce4780062942a7fe34fa2fa7316c872956)
-* [Wallet](https://etherscan.io/address/0x5b3256965e7c3cf26e11fcaf296dfc8807c01073)
-* [Wyvern Exchange](https://etherscan.io/address/0x7be8076f4ea4a4ad08075c2508e481d6c946d12b)
-* [WyvernProxyRegistry](https://etherscan.io/address/0xa5409ec958c83c3f309868babaca7c86dcb077c1)
+* [OpenSea Shared Storefront (OPENSTORE)](https://etherscan.io/address/0x495f947276749ce646f68ac8c248420045cb7b5e) 2020-12-02 to 2021-04-14
+* [OpenSea Token (OPT)](https://etherscan.io/address/0x1129eb10812935593bf44fe0a9b62a59a9202f6d) 2021-02-05 to 2021-04-08
+* [OpenSeaENSResolver](https://etherscan.io/address/0x9c4e9cce4780062942a7fe34fa2fa7316c872956) 2019-06-27 to 2020-07-03
+* [Wallet](https://etherscan.io/address/0x5b3256965e7c3cf26e11fcaf296dfc8807c01073) 2018-01-02 to 2021-04-08
+* [Wyvern Exchange](https://etherscan.io/address/0x7be8076f4ea4a4ad08075c2508e481d6c946d12b) 2018-06-12 to 2021-04-14
+* [WyvernProxyRegistry](https://etherscan.io/address/0xa5409ec958c83c3f309868babaca7c86dcb077c1) 2018-06-12 to 2021-04-14
 
 ### Rarible
 
-* [MintableToken (RARI)](https://etherscan.io/address/0x60f80121c31a0d46b5279700f9df786054aa5ee5)
-* [RariToken (RARI)](https://etherscan.io/address/0xfca59cd816ab1ead66534d82bc21e7515ce441cf)
+* [MintableToken (RARI)](https://etherscan.io/address/0x60f80121c31a0d46b5279700f9df786054aa5ee5) 2020-05-27 to 2021-04-14
+* [RariToken (RARI)](https://etherscan.io/address/0xfca59cd816ab1ead66534d82bc21e7515ce441cf) 2020-07-14 to 2021-04-14
 
 ### SuperRare
 
-* [Bids](https://etherscan.io/address/0x2947f98c42597966a0ec25e92843c09ac17fbaa7)
-* [SupeRare (SUPR)](https://etherscan.io/address/0x41a322b28d0ff354040e2cbc676f0320d8c8850d)
-* [SuperRareV2 (SUPR)](https://etherscan.io/address/0xb932a70a57673d89f4acffbe830e8ed7f75fb9e0)
-* [Unknown 1](https://etherscan.io/address/0x65b49f7aee40347f5a90b714be4ef086f3fe5e2c)
-* [Unknown 2](https://etherscan.io/address/0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656)
+* [Bids](https://etherscan.io/address/0x2947f98c42597966a0ec25e92843c09ac17fbaa7) 2019-09-04 to 2021-04-14
+* [SupeRare (SUPR)](https://etherscan.io/address/0x41a322b28d0ff354040e2cbc676f0320d8c8850d) 2018-04-01 to 2021-04-14
+* [SuperRareV2 (SUPR)](https://etherscan.io/address/0xb932a70a57673d89f4acffbe830e8ed7f75fb9e0) 2019-09-04 to 2021-04-14
+* [Unknown 1](https://etherscan.io/address/0x65b49f7aee40347f5a90b714be4ef086f3fe5e2c) 2020-12-05 to 2021-04-14
+* [Unknown 2](https://etherscan.io/address/0x8c9f364bf7a56ed058fc63ef81c6cf09c833e656) 2020-12-05 to 2021-04-14
 
 ### Zora
 
-* [Market](https://etherscan.io/address/0xe5bfab544eca83849c53464f85b7164375bdaac1)
-* [Media (ZORA)](https://etherscan.io/address/0xabefbc9fd2f806065b4f3c237d4b59d9a97bcac7)
+* [Market](https://etherscan.io/address/0xe5bfab544eca83849c53464f85b7164375bdaac1) 2020-12-31 to 2020-12-31
+* [Media (ZORA)](https://etherscan.io/address/0xabefbc9fd2f806065b4f3c237d4b59d9a97bcac7) 2020-12-31 to 2021-04-14
