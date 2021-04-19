@@ -46,7 +46,7 @@ def safe_dump(fn, obj):
             raise
 
 class Etherscan():
-    def __init__(self, apikey, cache_dir='cache'):
+    def __init__(self, apikey=None, cache_dir='cache'):
         self.apikey = apikey
         self.cache_dir = cache_dir
         os.makedirs(self.cache_dir, exist_ok=True)
@@ -56,6 +56,8 @@ class Etherscan():
         Load transactions from cache if available, check Etherscan for updates, and
         save result to cache.
         """
+        if self.apikey is None:
+            update = False
         if address in blocklist:
             return []
         if verbose:
