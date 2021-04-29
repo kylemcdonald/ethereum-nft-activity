@@ -49,6 +49,11 @@ This script has a few unique additional flags:
 
 This will pull all the transactions from Etherscan, sum the transaction fees and gas used, and group by day and platform. Results are saved in the `/output` directory as CSV files. Run the script with, for example: `python cryptoart_history.py --ng --verbose`
 
+The most recent results are cached here:
+
+- [Transaction fees](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/output/cryptoart-fees.csv)
+- [Gas usage](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/output/cryptoart-gas.csv)
+
 ### Additional flags
 
 Both scripts have these shared additional flags:
