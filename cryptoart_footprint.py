@@ -6,10 +6,11 @@ from collections import defaultdict
 from etherscan import Etherscan, filter_transactions, sum_gas_used
 from ethereum_footprint import EthereumFootprint
 from nifty_gateway import list_nifty_gateway
-from utils import load_contracts, load_etherscan_api_key, write_results_tsv, write_results_json
+from utils import load_contracts, load_etherscan_api_key, write_results_tsv, write_results_json, split_name_kind
 
 parser = argparse.ArgumentParser(description='Estimate emissions footprint for CryptoArt platforms.')
 parser.add_argument('--ng', action='store_true', help='Estimate footprint for Nifty Gateway.')
+parser.add_argument('--contracts', default=None, help='Use a specific list of contracts.')
 parser.add_argument('--summary', action='store_true', help='Summarize results by marketplace.')
 parser.add_argument('--noupdate', action='store_false', help='Do not update cache.')
 parser.add_argument('--startdate', default='', help='YYYY-MM-DD start date for transactions.')
@@ -26,7 +27,7 @@ if args.enddate != '':
     end_date = datetime.date.fromisoformat(args.enddate)
 
 api_key = load_etherscan_api_key()
-contracts = load_contracts()
+contracts = load_contracts(args.contracts)
 etherscan = Etherscan(api_key)
 ethereum_footprint = EthereumFootprint()
 
@@ -55,7 +56,7 @@ for name_kind, address in contracts.items():
     transactions = filter_transactions(transactions, start_date, end_date)
     gas = sum_gas_used(transactions)
     kgco2 = int(ethereum_footprint.sum_kgco2(transactions))
-    name, kind = name_kind.split('/')
+    name, kind = split_name_kind(name_kind)
     summary[name]['gas'] += gas
     summary[name]['transactions'] += len(transactions)
     summary[name]['kgco2'] += kgco2

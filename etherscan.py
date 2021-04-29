@@ -5,7 +5,7 @@ import datetime
 import os
 
 blocklist = [
-    '0x06012c8cf97bead5deae237070f9587f8e7a266d' # cryptokitties
+    # '0x06012c8cf97bead5deae237070f9587f8e7a266d' # cryptokitties
 ]
 
 def etherscan_method_id(tx):
@@ -79,7 +79,7 @@ class Etherscan():
         if address in blocklist:
             return []
         if verbose:
-            print(address)
+            print('load_transactions', address)
         fn = os.path.join(self.cache_dir, address + '.json')
         startblock = None
         transactions = []
@@ -94,7 +94,7 @@ class Etherscan():
             if len(transactions):
                 startblock = max([int(e['blockNumber']) for e in transactions])
                 if verbose:
-                    print('starting at', startblock, 'with', len(transactions))
+                    print('starting from cache at', startblock, 'with', len(transactions))
         # add new transactions
         transactions.extend(self.fetch_transactions(address, startblock=startblock, verbose=verbose, **kwargs))
         # dedupe
@@ -128,10 +128,10 @@ class Etherscan():
                         'timeStamp': e['timeStamp']
                     } for e in transactions]
             except TypeError:
-                print(address, startblock, endblock, transactions)
+                print('error', address, 'start block', startblock, 'end block', endblock, 'transactions', transactions)
             all_transactions.extend(transactions)
             if verbose:
-                print(startblock, len(all_transactions))
+                print('fetching block', startblock, 'total transactions', len(all_transactions))
             if len(transactions) < 10000:
                 break
             # do not incremement the block, in case there are multiple transactions in one block
@@ -143,7 +143,7 @@ class Etherscan():
         transactions = []
         for address in addresses:
             if verbose:
-                print(address)
+                print('load_transactions', address)
             for tx in self.load_transactions(address, **kwargs):
                 transactions.append(tx)
         return transactions
