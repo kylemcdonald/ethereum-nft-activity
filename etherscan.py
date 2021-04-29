@@ -8,6 +8,9 @@ blocklist = [
     '0x06012c8cf97bead5deae237070f9587f8e7a266d' # cryptokitties
 ]
 
+def etherscan_method_id(tx):
+    return tx['input'][:10]
+
 def etherscan_timestamp(tx):
     return datetime.datetime.fromtimestamp(int(tx['timeStamp']))
 
@@ -50,6 +53,21 @@ class Etherscan():
         self.apikey = apikey
         self.cache_dir = cache_dir
         os.makedirs(self.cache_dir, exist_ok=True)
+        
+    def load_abi(self, address, verbose=False):
+        fn = os.path.join(self.cache_dir, address + '.abi.json')
+        if os.path.exists(fn):
+            with open(fn) as f:
+                result = f.read()
+        else:
+            url = f'https://api.etherscan.io/api?module=contract&action=getabi&address={address}&apikey={self.apikey}'
+            response = requests.get(url)
+            result = response.json()['result']
+            with open(fn, 'w') as f:
+                f.write(result)
+        if result == 'Contract source code not verified':
+            return None
+        return json.loads(result)
 
     def load_transactions(self, address, update=True, verbose=False, **kwargs):
         """
@@ -93,9 +111,9 @@ class Etherscan():
         response = requests.get(url)
         return response.json()['result']
 
-    def fetch_transactions(self, address, startblock=None, endblock=None, simplify=True, verbose=False):
+    def fetch_transactions(self, address, startblock=None, endblock=None, simplify=False, verbose=False):
         """
-        To keep all the data from Etherscan, set simplify=False.
+        To only keep a subset of the data from Etherscan, set simplify=True.
         """
         all_transactions = []
         while True:
@@ -106,6 +124,7 @@ class Etherscan():
                         'hash': e['hash'],
                         'blockNumber': e['blockNumber'],
                         'gasUsed': e['gasUsed'],
+                        'gasPrice': e['gasPrice'],
                         'timeStamp': e['timeStamp']
                     } for e in transactions]
             except TypeError:

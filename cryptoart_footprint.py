@@ -36,17 +36,17 @@ output_json = {}
 output_json['data'] = []
 
 for name_kind, address in contracts.items():
+    if name_kind.startswith('Nifty Gateway'):
+        if not args.ng:
+            continue # skip nifty gateway if user doesn't ask for it
+
     if name_kind == 'Nifty Gateway/multiple':
-        if args.ng:
-            addresses = list_nifty_gateway(
-                update=args.noupdate,
-                verbose=args.verbose)
-            transactions = etherscan.load_transactions_multiple(addresses,
-                update=args.noupdate,
-                verbose=args.verbose)
-        else:
-            # skip nifty gateway if user doesn't ask for it
-            continue
+        addresses = list_nifty_gateway(
+            update=args.noupdate,
+            verbose=args.verbose)
+        transactions = etherscan.load_transactions_multiple(addresses,
+            update=args.noupdate,
+            verbose=args.verbose)
     else:
         transactions = etherscan.load_transactions(address,
             update=args.noupdate,

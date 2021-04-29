@@ -1,24 +1,27 @@
 # cryptoart-footprint
 
-Estimate the total CO2 footprint for popular CryptoArt platforms. The goal is to accurately quantify the ecological damage of Ethereum 1.0 PoW-backed CryptoArt platforms.
+How much energy does it take to power popular Ethereum-backed CryptoArt platforms? And what emissions are associated with this energy use?
 
-To estimate the footprint for a specific Ethereum wallet or contract try [carbon.fyi](https://carbon.fyi/). To estimate the footprint of a specific artwork try [cryptoart.wtf](http://cryptoart.wtf/).
+These questions do not have clear answers for two reasons:
 
-Status as of April 14, 2021:
+1. The overall energy usage and emissions of Ethereum are hard to estimate. I am working on this in a separate repo: [kylemcdonald/ethereum-energy](https://github.com/kylemcdonald/ethereum-energy)
+2. The portion for which a specific user, platform, or transaction might be considered "responsible" for is more of a philosophical question than a technical one. Like many complex systems, there is an indirect relationship between the service and the emissions. I am working on different approaches in this notebook: [Per-Transaction Models](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/Per-Transaction%20Models.ipynb)
 
-| Name          | Gas             | Transactions | kgCO2      |
-|---------------|-----------------|--------------|------------|
-| OpenSea       | 204,654,346,811 |      956,056 | 76,898,725 |
-| Nifty Gateway |  41,836,246,556 |      173,365 | 18,406,734 |
-| Rarible       |  35,087,223,496 |      271,809 | 14,095,417 |
-| Foundation    |  15,893,442,936 |       97,703 |  8,071,759 |
-| Makersplace   |  23,660,470,033 |       75,200 |  7,238,919 |
-| SuperRare     |  17,638,307,009 |      189,543 |  5,899,355 |
-| Async         |   1,586,592,079 |      144,311 |    520,047 |
-| Known Origin  |   5,036,977,472 |       20,735 |  1,652,845 |
-| Zora          |   2,197,682,554 |        8,620 |  1,036,424 |
+This table represents one method for computing emissions, as of April 28, 2021. The methodology is described below.
 
-## Run
+| Name          | Gas          | Transactions | kgCO2    |
+|---------------|--------------|--------------|----------|
+| Async         |   1638562820 |        16335 |   464189 |
+| Foundation    |  20489990935 |       122582 | 10195179 |
+| Known Origin  |   5129939934 |        21156 |  1696116 |
+| Makersplace   |  24799705248 |        78510 |  7768245 |
+| Nifty Gateway |  49791570029 |       202966 | 22253639 |
+| OpenSea       | 217410494380 |      1016553 | 82838112 |
+| Rarible       |  38112831226 |       293205 | 15496197 |
+| SuperRare     |  18267224757 |       195806 |  6197049 |
+| Zora          |   2317359284 |         9111 |  1091823 |
+
+## Preparation
 
 First, sign up for an API key at [Etherscan](https://etherscan.io/myapikey). Create `env.json` and add the API key. It should look like:
 
@@ -30,19 +33,29 @@ First, sign up for an API key at [Etherscan](https://etherscan.io/myapikey). Cre
 
 Install requests `pip install requests` if it is not already available.
 
-Then run the script: `python cryptoart_footprint.py`. This will run the calculations and save current emissions data to `/output` directory in JSON.
+### `cryptoart_footprint.py`
 
-This may take longer the first time, while your local cache is updated.
+This will pull all the transactions from Etherscan, sum the gas and transaction counts, and do a basic emissions estimate. Results are saved in the `/output` directory as JSON or TSV. Run the script with, for example: `python cryptoart_footprint.py --ng --verbose --tsv --summary`. 
 
-Additional flags:
+This may take longer the first time, while your local cache is updated. When updating after a week, it may take 5 minutes to download all new transactions. The entire cache as of 2021-04-28 is 8.6G.
 
-* `--ng` to also estimate the footprint for Nifty Gateway. This takes much longer than other platforms, because Nifty Gateway uses a separate smart contract per exhibition/drop.
+This script has a few unique additional flags:
+
 * `--summary` to summarize the results in a format similar to the above table, combining multiple contracts into a single row of output.
-* `--noupdate` runs from cached results. This will not make any requests to Nifty Gateway or Etherscan.
 * `--startdate` and `--enddate` can be used to only analyze a specific date range, using the format `YYYY-MM-DD`.
 * `--tsv` will save the results of analysis as a TSV file instead of JSON.
-* `--verbose` prints progress when scraping Nifty Gateway or pulling transactions from Etherscan.
 
+### `cryptoart_history.py`
+
+This will pull all the transactions from Etherscan, sum the transaction fees and gas used, and group by day and platform. Results are saved in the `/output` directory as CSV files. Run the script with, for example: `python cryptoart_history.py --ng --verbose`
+
+### Additional flags
+
+Both scripts have these shared additional flags:
+
+* `--ng` to also pull transactions for Nifty Gateway. This can take much longer than other platforms, because Nifty Gateway uses a separate smart contract per exhibition/drop.
+* `--noupdate` runs from cached results. This will not make any requests to Nifty Gateway or Etherscan. When using the `Etherscan` class in code without an API key, this is the default behavior.
+* `--verbose` prints progress when scraping Nifty Gateway or pulling transactions from Etherscan.
 
 ## Methodology
 
@@ -52,7 +65,7 @@ The footprint of a platform is the sum of the footprints for all artwork on the 
 2. The total power used during that day, estimated by [Digiconomist](https://digiconomist.net/ethereum-energy-consumption/).
 3. The total gas used during that day, measured by [Etherscan](https://etherscan.io/chart/gasused?output=csv).
 
-The total kgCO2 for a platform is equal to the sum of the gas used for each transaction times the kgCO2/gas on that day. Finally, we add 20% to handle "network inefficiencies and unnaccounted for mining pools" [as described by Offsetra](https://www.notion.so/Carbon-FYI-Methodology-51e2d8c41d1c4963970a143b8629f5f9). Offsetra has since removed this 20% from their method.
+The total kgCO2 for a platform is equal to the sum of the gas used for each transaction times the kgCO2/gas on that day. Finally, we add 20% to handle "network inefficiencies and unnaccounted for mining pools" [as originally described by Offsetra](https://www.notion.so/Carbon-FYI-Methodology-51e2d8c41d1c4963970a143b8629f5f9). Offsetra has since removed this 20% from their method.
 
 ## Sources
 
@@ -60,11 +73,22 @@ When possible, we have confirmed contract coverage directly with the marketplace
 
 * SuperRare
 * Foundation
+* OpenSea
 
 ### Limitations
 
 * Digiconomist's Bitcoin estimates [have been criticized](https://www.coincenter.org/estimating-bitcoin-electricity-use-a-beginners-guide/) as low (5x too low) or high (2x too high) compared to other estimates. It may be possible to make a more accurate estimate for Ethereum following a different methodology, based on the available mining hardware and corresponding power usage. That said, even the official Ethereum website [references Digiconomist](https://ethereum.org/en/nft/#footnotes-and-sources) when discussing the power usage. Work on a more accurate bottom-up energy and emissions estimate for Ethereum is happening in [kylemcdonald/ethereum-energy](https://github.com/kylemcdonald/ethereum-energy).
 * Mining pool locations and the corresponding emissions intensity may have changed significantly from the 2019 values. A full correction might correspond to a +/-50% change.
+
+## Extending
+
+To modify this code so that it works on more platforms, add the contracts or wallets for each platform to the `data/contracts.json` file, in the format:
+
+```js
+'<Platform Name>/<Contract Name>': '<0xAddress>'
+```
+
+To track Cryptokitties, you will need to explicitly remove the Cryptokitties contract from the blocklist in `etherscan.py`. Cryptokitties are blocked by default because there is a collection of Momo Wang Cryptokitties that have been grafted onto the Nifty Gateway marketplace that would otherwise require this script to pull all Cryptokitties ever.
 
 ## Contracts and Addresses
 
