@@ -24,6 +24,9 @@ fee_data = defaultdict(lambda:defaultdict(int))
 
 for name_kind, address in contracts.items():
 
+    if args.verbose:
+        print(name_kind)
+
     if name_kind.startswith('Nifty Gateway'):
         if not args.ng:
             continue # skip nifty gateway if user doesn't ask for it
@@ -42,12 +45,21 @@ for name_kind, address in contracts.items():
         
     name, kind = split_name_kind(name_kind)
 
+    all_gas_fees = 0
+    all_gas_used = 0
     for tx in transactions:
         date = etherscan_timestamp(tx).date()
         gas_used = etherscan_gas_used(tx)
         gas_data[name][date] += gas_used
+        all_gas_used += gas_used
         gas_fees = etherscan_gas_fees(tx)
         fee_data[name][date] += gas_fees
+        all_gas_fees += gas_fees
+    
+    if args.verbose:
+        print(f'\ttransactions {len(transactions)}')
+        print(f'\tgas_used {all_gas_used:,}')
+        print(f'\tgas_fees {all_gas_fees/1e18:.2f} ETH')
 
 today = datetime.datetime.now().date().isoformat()
 
@@ -56,8 +68,8 @@ if args.verbose:
     print(f'Writing fees to {fn}')
 
 df = pd.DataFrame(fee_data) / 1e18 # convert from wei to ether
-df.index.name = 'Date'
-df = df.sort_values('Date', ascending=False)
+df.index.name = 'Totals for data'
+df = df.sort_values('Totals for data', ascending=False)
 df = df.fillna(0)
 df.to_csv(fn)
 
@@ -66,8 +78,8 @@ if args.verbose:
     print(f'Writing gas to {fn}')
 
 df = pd.DataFrame(gas_data)
-df.index.name = 'Date'
-df = df.sort_values('Date', ascending=False)
+df.index.name = 'Totals for data'
+df = df.sort_values('Totals for data', ascending=False)
 df = df.fillna(0)
 df = df.astype(int)
 df.to_csv(fn)

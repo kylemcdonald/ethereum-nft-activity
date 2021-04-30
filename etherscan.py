@@ -5,7 +5,7 @@ import datetime
 import os
 
 blocklist = [
-    # '0x06012c8cf97bead5deae237070f9587f8e7a266d' # cryptokitties
+    '0x06012c8cf97bead5deae237070f9587f8e7a266d' # cryptokitties
 ]
 
 def etherscan_method_id(tx):
@@ -88,6 +88,8 @@ class Etherscan():
                 try:
                     transactions = json.load(f)
                 except json.decoder.JSONDecodeError:
+                    if verbose:
+                        print('ignoring error while loading', fn)
                     pass
             if not update:
                 return transactions
@@ -109,30 +111,29 @@ class Etherscan():
         if endblock is not None:
             url += f'&endblock={endblock}'
         response = requests.get(url)
-        return response.json()['result']
+        try:
+            return response.json()['result']
+        except:
+            print('error parsing transactions', url)
+            return []
 
-    def fetch_transactions(self, address, startblock=None, endblock=None, simplify=False, verbose=False):
+    def fetch_transactions(self, address, startblock=None, endblock=None, simplify=True, verbose=False):
         """
-        To only keep a subset of the data from Etherscan, set simplify=True.
+        To keep the entire inputData, set simplify=False.
         """
         all_transactions = []
         while True:
             transactions = self.fetch_transactions_in_range(address, startblock, endblock)
             try:
                 if simplify:
-                    transactions = [{
-                        'hash': e['hash'],
-                        'blockNumber': e['blockNumber'],
-                        'gasUsed': e['gasUsed'],
-                        'gasPrice': e['gasPrice'],
-                        'timeStamp': e['timeStamp']
-                    } for e in transactions]
+                    for i,tx in enumerate(transactions):
+                        transactions[i]['input'] = tx['input'][:10]
             except TypeError:
                 print('error', address, 'start block', startblock, 'end block', endblock, 'transactions', transactions)
             all_transactions.extend(transactions)
             if verbose:
                 print('fetching block', startblock, 'total transactions', len(all_transactions))
-            if len(transactions) < 10000:
+            if len(transactions) < 1000:
                 break
             # do not incremement the block, in case there are multiple transactions in one block
             # but spread across paginated results. we dedupe later.

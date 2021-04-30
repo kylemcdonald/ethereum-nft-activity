@@ -6,7 +6,7 @@ def load_etherscan_api_key():
         payload = json.load(file)
     return payload['etherscan-api-key']
 
-def load_contracts(fn):
+def load_contracts(fn=None):
     if fn is None:
         fn = 'data/contracts.json'
     with open(fn) as file:
