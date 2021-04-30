@@ -7,7 +7,7 @@ These questions do not have clear answers for two reasons:
 1. The overall energy usage and emissions of Ethereum are hard to estimate. I am working on this in a separate repo: [kylemcdonald/ethereum-energy](https://github.com/kylemcdonald/ethereum-energy)
 2. The portion for which a specific user, platform, or transaction might be considered "responsible" for is more of a philosophical question than a technical one. Like many complex systems, there is an indirect relationship between the service and the emissions. I am working on different approaches in this notebook: [Per-Transaction Models](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/Per-Transaction%20Models.ipynb)
 
-This table represents one method for computing emissions, as of April 28, 2021. The methodology is described below.
+This table represents one method for computing emissions, as of April 29, 2021. The methodology is described below.
 
 | Name          | Gas          | Transactions | kgCO2    |
 |---------------|--------------|--------------|----------|
@@ -74,11 +74,13 @@ The total kgCO2 for a platform is equal to the sum of the gas used for each tran
 
 ## Sources
 
+Contracts are sourced from a combination of personal research and [DappRadar](https://dappradar.com/).
+
 When possible, we have confirmed contract coverage directly with the marketplaces. Confirmed contracts include:
 
-* SuperRare
-* Foundation
-* OpenSea
+* SuperRare: all confirmed
+* Foundation: all confirmed
+* OpenSea: some contracts on DappRadar have not been confirmed
 
 ### Limitations
 
