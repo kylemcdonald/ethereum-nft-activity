@@ -1,4 +1,4 @@
-# cryptoart-footprint
+# ethereum-nft-activity
 
 How much energy does it take to power popular Ethereum-backed CryptoArt platforms? And what emissions are associated with this energy use?
 
