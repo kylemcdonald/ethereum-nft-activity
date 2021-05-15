@@ -2,7 +2,7 @@ import requests
 import os
 import json
 import datetime
-import os
+import time
 
 from simplify_tx import simplify_tx
 
@@ -100,7 +100,7 @@ class Etherscan():
         safe_dump(fn, transactions)
         return transactions
 
-    def fetch_transactions_in_range(self, address, startblock, endblock):
+    def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=1):
         url = f'https://api.etherscan.io/api?module=account&apikey={self.apikey}&action=txlist&address={address}'
         if startblock is not None:
             url += f'&startblock={startblock}'
@@ -108,7 +108,13 @@ class Etherscan():
             url += f'&endblock={endblock}'
         response = requests.get(url)
         try:
-            return response.json()['result']
+            result = response.json()['result']
+            if 'rate limit' in result:
+                print('hit rate limit, sleeping', ratelimit_sleep, 'seconds')
+                ratelimit_sleep *= 2
+                time.sleep(ratelimit_sleep)
+                return self.fetch_transactions_in_range(address, startblock, endblock, ratelimit_sleep)
+            return result
         except:
             print('error parsing transactions', url)
             return []
