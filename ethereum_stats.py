@@ -63,4 +63,4 @@ class EthereumStats:
         df.to_csv(self.cache_fn)
 
 if __name__ == '__main__':
-    EthereumStats(update=True)
+    EthereumStats(verbose=True, update=True)

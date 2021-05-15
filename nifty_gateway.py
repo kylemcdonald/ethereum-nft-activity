@@ -56,7 +56,7 @@ def list_nifty_gateway(update=True, verbose=False):
         filtered[f'Nifty Gateway/{i}'] = hash
 
     with open(cache_fn, 'w') as f:
-        json.dump(filtered, f)
+        json.dump(filtered, f, indent=2)
 
     return filtered
 

@@ -31,7 +31,7 @@ First, sign up for an API key at [Etherscan](https://etherscan.io/myapikey). Cre
 }
 ```
 
-Install requests `pip install requests` if it is not already available.
+Install requirements: `pip install requests tqdm pandas`.
 
 ### `contracts_footprint.py`
 
