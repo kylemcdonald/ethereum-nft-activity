@@ -5,7 +5,7 @@ from utils import get_timestamp
 import argparse
 
 parser = argparse.ArgumentParser(description='Compute percentages of NFT activity relative to all Ethereum activity.')
-parser.add_argument('--prefix', type=str, help='Input/output file prefix.')
+parser.add_argument('prefix', type=str, help='Input/output file prefix.')
 args = parser.parse_args()
 
 stats = EthereumStats()
