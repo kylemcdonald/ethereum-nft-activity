@@ -5,17 +5,16 @@ from collections import defaultdict
 
 from etherscan import Etherscan, filter_transactions, sum_gas_used
 from ethereum_footprint import EthereumFootprint
-from nifty_gateway import list_nifty_gateway
 from utils import load_contracts, load_etherscan_api_key, write_results_tsv, write_results_json, split_name_kind
 
-parser = argparse.ArgumentParser(description='Estimate emissions footprint for CryptoArt platforms.')
-parser.add_argument('--ng', action='store_true', help='Estimate footprint for Nifty Gateway.')
-parser.add_argument('--contracts', default=None, help='Use a specific list of contracts.')
-parser.add_argument('--summary', action='store_true', help='Summarize results by marketplace.')
+parser = argparse.ArgumentParser(description='Estimate emissions footprint for Ethereum platforms.')
+parser.add_argument('contracts', nargs='+', help='List of contract JSON filenames')
+parser.add_argument('--separate', action='store_true', help='Split results by contract.')
 parser.add_argument('--noupdate', action='store_false', help='Do not update cache.')
 parser.add_argument('--startdate', default='', help='YYYY-MM-DD start date for transactions.')
 parser.add_argument('--enddate', default='', help='YYYY-MM-DD end date for transactions.')
 parser.add_argument('--tsv', action='store_true', help='Output to TSV instead of JSON')
+parser.add_argument('--simplify', action='store_true', help='Simplify transactions to minimize cache size.')
 parser.add_argument('--verbose', action='store_true', help='Verbose mode.')
 args = parser.parse_args()
 
@@ -37,21 +36,14 @@ output_json = {}
 output_json['data'] = []
 
 for name_kind, address in contracts.items():
-    if name_kind.startswith('Nifty Gateway'):
-        if not args.ng:
-            continue # skip nifty gateway if user doesn't ask for it
+    
+    if args.verbose:
+        print(name_kind)
 
-    if name_kind == 'Nifty Gateway/multiple':
-        addresses = list_nifty_gateway(
-            update=args.noupdate,
-            verbose=args.verbose)
-        transactions = etherscan.load_transactions_multiple(addresses,
-            update=args.noupdate,
-            verbose=args.verbose)
-    else:
-        transactions = etherscan.load_transactions(address,
-            update=args.noupdate,
-            verbose=args.verbose)
+    transactions = etherscan.load_transactions(address,
+        update=args.noupdate,
+        simplify=args.simplify,
+        verbose=args.verbose)
 
     transactions = filter_transactions(transactions, start_date, end_date)
     gas = sum_gas_used(transactions)
@@ -61,7 +53,7 @@ for name_kind, address in contracts.items():
     summary[name]['transactions'] += len(transactions)
     summary[name]['kgco2'] += kgco2
 
-    if not args.summary:
+    if args.separate:
         row = {
             'name': name,
             'kind': kind,
@@ -72,7 +64,7 @@ for name_kind, address in contracts.items():
         }
         output_json['data'].append(row)
 
-if args.summary:
+if not args.separate:
     for name in sorted(summary.keys()):
         gas = summary[name]['gas']
         transactions = summary[name]['transactions']

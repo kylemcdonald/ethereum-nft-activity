@@ -1,26 +1,52 @@
 import json
 import datetime
+import csv
+from io import StringIO
+
+def read_csv(fn, skip_header=True):
+    with open(fn) as f:
+        reader = csv.reader(f)
+        if skip_header:
+            next(reader)
+        for row in reader:
+            yield row
+
+def read_csv_string(text, skip_header=True):
+    if type(text) == bytes:
+        text = text.decode('utf8')
+    f = StringIO(text)
+    reader = csv.reader(f)
+    if skip_header:
+        next(reader)
+    for row in reader:
+        yield row
 
 def load_etherscan_api_key():
     with open('env.json') as file:
         payload = json.load(file)
     return payload['etherscan-api-key']
 
-def load_contracts(fn=None):
-    if fn is None:
-        fn = 'data/contracts.json'
-    with open(fn) as file:
-        return json.load(file)
+def load_contracts(fns=None):
+    if fns is None:
+        fns = ['data/contracts.json']
+    contracts = {}
+    for fn in fns:
+        with open(fn) as file:
+            contracts.update(json.load(file))
+    return contracts
+
+def get_timestamp():
+    return datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
 def write_results_json(output):
-    current_datetime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    current_datetime = get_timestamp()
     result_filepath = f'output/{current_datetime}.json'
     with open(result_filepath, 'w') as f:
         json.dump(output, f)
     print(f'Emissions results saved to file: "{result_filepath}"')
 
 def write_results_tsv(output):
-    current_datetime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    current_datetime = get_timestamp()
     result_filepath = f'output/{current_datetime}.tsv'
     cols = list(output['data'][0].keys())
     with open(result_filepath, 'w') as f:

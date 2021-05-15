@@ -8,6 +8,8 @@ class NearestDict:
     nearest date.
     """
     def __init__(self, d):
+        if type(d) is not dict:
+            d = dict(d)
         self.d = d
         self.keys, self.values = zip(*sorted(d.items()))
         

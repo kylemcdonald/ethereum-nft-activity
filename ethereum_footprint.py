@@ -1,15 +1,8 @@
 import datetime
-import csv
+from utils import read_csv
 from nearest_dict import NearestDict
 from etherscan import etherscan_gas_used, etherscan_timestamp
 import requests
-
-def read_csv(fn):
-    with open(fn) as f:
-        reader = csv.reader(f)
-        next(reader)
-        for row in reader:
-            yield row
 
 class EthereumFootprint():
     """

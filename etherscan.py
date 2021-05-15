@@ -4,9 +4,7 @@ import json
 import datetime
 import os
 
-blocklist = [
-    '0x06012c8cf97bead5deae237070f9587f8e7a266d' # cryptokitties
-]
+from simplify_tx import simplify_tx
 
 def etherscan_method_id(tx):
     return tx['input'][:10]
@@ -42,7 +40,7 @@ def sum_gas_used(transactions):
 def safe_dump(fn, obj):
     with open(fn, 'w') as f:
         try:
-            json.dump(obj, f)
+            json.dump(obj, f, separators=(',', ':'))
         except:
             # truncate files instead of writing corrupt json
             f.truncate()
@@ -76,8 +74,6 @@ class Etherscan():
         """
         if self.apikey is None:
             update = False
-        if address in blocklist:
-            return []
         if verbose:
             print('load_transactions', address)
         fn = os.path.join(self.cache_dir, address + '.json')
@@ -126,8 +122,7 @@ class Etherscan():
             transactions = self.fetch_transactions_in_range(address, startblock, endblock)
             try:
                 if simplify:
-                    for i,tx in enumerate(transactions):
-                        transactions[i]['input'] = tx['input'][:10]
+                    transactions = list(map(simplify_tx, transactions))
             except TypeError:
                 print('error', address, 'start block', startblock, 'end block', endblock, 'transactions', transactions)
             all_transactions.extend(transactions)
