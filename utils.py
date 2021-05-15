@@ -26,6 +26,14 @@ def load_etherscan_api_key():
         payload = json.load(file)
     return payload['etherscan-api-key']
 
+def load_stats_endpoint(endpoint):
+    url = 'https://etherscan.io/chart/{}?output=csv'
+    with open('env.json') as f:
+        env = json.load(f)
+    if 'stats-endpoint' in env:
+        url = env['stats-endpoint']
+    return url.format(endpoint)
+
 def load_contracts(fns=None):
     if fns is None:
         fns = ['data/contracts.json']

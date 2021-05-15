@@ -4,6 +4,7 @@ from collections import defaultdict
 import pandas as pd
 from io import StringIO
 from nearest_dict import NearestDict
+from utils import load_stats_endpoint
 
 class EthereumStats:
     def __init__(self, update=False, verbose=False):
@@ -38,10 +39,10 @@ class EthereumStats:
         collected = defaultdict(dict)
 
         def add_source(endpoint):
-            url = f'https://etherscan.io/chart/{endpoint}?output=csv'
             headers = {'User-Agent': 'Chrome'}
             if verbose:
                 print('Updating', endpoint)
+            url = load_stats_endpoint(endpoint)
             res = requests.get(url, headers=headers)
             if verbose:
                 print('\t', len(res.content), 'bytes')
