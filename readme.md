@@ -98,13 +98,17 @@ When possible, we have confirmed contract coverage directly with the marketplace
 * Digiconomist's Bitcoin estimates [have been criticized](https://www.coincenter.org/estimating-bitcoin-electricity-use-a-beginners-guide/) as low (5x too low) or high (2x too high) compared to other estimates. It may be possible to make a more accurate estimate for Ethereum following a different methodology, based on the available mining hardware and corresponding power usage. That said, even the official Ethereum website [references Digiconomist](https://ethereum.org/en/nft/#footnotes-and-sources) when discussing the power usage. Work on a more accurate bottom-up energy and emissions estimate for Ethereum is happening in [kylemcdonald/ethereum-energy](https://github.com/kylemcdonald/ethereum-energy).
 * Mining pool locations and the corresponding emissions intensity may have changed significantly from the 2019 values. A full correction might correspond to a +/-50% change.
 
-## Extending
+## How to add more platforms
 
-To modify this code so that it works on more platforms, add the contracts or wallets for each platform to the `data/contracts.json` file or to another file passed to the above scripts, using the format:
+To modify this code so that it works with more platforms, add every possible contract and wallet for each platform to the `data/contracts.json` file, using the format:
 
 ```js
 '<Platform Name>/<Contract Name>': '<0xAddress>'
 ```
+
+Additionally, any NFT-specific contracts (e.g. ERC-721 and compatible) should be added to the `data/marketplaces-collectibles-games.json` file, with a similar format.
+
+Then [submit a pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) back to this repository. Thanks in advance!
 
 To track Cryptokitties, you will need to explicitly remove the Cryptokitties contract from the blocklist in `etherscan.py`. Cryptokitties are blocked by default because there is a collection of Momo Wang Cryptokitties that have been grafted onto the Nifty Gateway marketplace that would otherwise require this script to pull all Cryptokitties ever.
 
