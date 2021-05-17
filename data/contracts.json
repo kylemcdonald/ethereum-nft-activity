@@ -1,7 +1,9 @@
 {
   "Async/ASYNC-V2": "0xb6dae651468e9593e4581705a09c10a76ac1e0c8",
   "Async/ASYNC": "0x6c424c25e9f1fff9642cb5b7750b0db7312c29ad",
-  "ArtBlocks/GenArt721Core": "0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270",
+  "Art_Blocks/GenArt721Core": "0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270",
+  "Art_Blocks/GenArt721": "0x059EDD72Cd353dF5106D2B9cC5ab83a52287aC3a",
+  "Art_Blocks/Deployer": "0x96dc73c8b5969608c77375f085949744b5177660",
   "Foundation/ERC-721": "0xcda72070e455bb31c7690a170224ce43623d0b6f",
   "Foundation/FND NFT (FNDNFT) ERC-20": "0x3b3ee1931dc30c1957379fac9aba94d1c48a5405",
   "KnownOrigin/ArtistAcceptingBids": "0x921ade9018eec4a01e41e80a7eeba982b61724ec",
