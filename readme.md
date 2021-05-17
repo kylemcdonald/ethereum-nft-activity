@@ -116,9 +116,11 @@ To track Cryptokitties, you will need to explicitly remove the Cryptokitties con
 
 Contracts and addresses used by each platform can be found in `data/contracts.json` and are also listed here using `python print_contracts.py` to generate Markdown. Nifty Gateway contracts are listed separately in `data/nifty-gateway-contracts.json`.
 
-### ArtBlocks
+### Art Blocks
 
-* [GenArt721Core](https://etherscan.io/address/0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270) 2020-12-12 to 2021-05-16
+* [Deployer](https://etherscan.io/address/0x96dc73c8b5969608c77375f085949744b5177660) 2020-11-27 to 2021-05-15
+* [GenArt721](https://etherscan.io/address/0x059EDD72Cd353dF5106D2B9cC5ab83a52287aC3a) 2020-11-27 to 2021-05-16
+* [GenArt721Core](https://etherscan.io/address/0xa7d8d9ef8d8ce8992df33d8b8cf4aebabd5bd270) 2020-12-12 to 2021-05-17
 
 ### Async
 
