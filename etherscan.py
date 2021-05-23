@@ -93,11 +93,13 @@ class Etherscan():
                 startblock = max([int(e['blockNumber']) for e in transactions])
                 if verbose:
                     print('starting from cache at', startblock, 'with', len(transactions))
+        count_before = len(transactions)
         # add new transactions
         transactions.extend(self.fetch_transactions(address, startblock=startblock, verbose=verbose, **kwargs))
         # dedupe
         transactions = list({e['hash']:e for e in transactions}.values())
-        safe_dump(fn, transactions)
+        if len(transactions) > count_before:
+            safe_dump(fn, transactions)
         return transactions
 
     def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=1):
