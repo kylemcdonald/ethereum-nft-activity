@@ -19,6 +19,9 @@ for kind, name, baseline in [('tx-count', 'Transactions', stats.tx_count),
     for date, value in zip(dates, totals):
         compiled[date][name] = value / baseline[date]
 
+    pct = data.divide([baseline[e] for e in dates], axis='index')
+    pct.to_csv(f'output/{args.prefix}-{kind}-percentages.csv')
+
 df = pd.DataFrame(compiled).transpose()
 df.index.name = 'Date'
 df.to_csv(f'output/{args.prefix}-percentages.csv')
