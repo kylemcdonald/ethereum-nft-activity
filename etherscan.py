@@ -59,12 +59,12 @@ class Etherscan():
         return self.db.cursor().execute(cmd)
     
     def insert_transactions(self, address, transactions):
-        cmd = f'insert or replace into "{address}" values (?, ?, ?, ?, ?)'
+        cmd = f'insert or replace into "{address.lower()}" values (?, ?, ?, ?, ?)'
         self.db.cursor().executemany(cmd, build_rows(transactions))
         
     def create_transactions_table(self, address):
         return self.execute(
-            f'create table if not exists "{address}" (\
+            f'create table if not exists "{address.lower()}" (\
             hash blob primary key, \
             block_number integer key, \
             timestamp integer, \
@@ -72,14 +72,14 @@ class Etherscan():
             gas_used integer)')
     
     def list_transactions(self, address):
-        for row in self.execute(f'select * from "{address}"'):
+        for row in self.execute(f'select * from "{address.lower()}"'):
             yield Transaction(*row)
 
     def count_transactions(self, address):
-        return self.execute(f'select count(*) from "{address}"').fetchone()[0]
+        return self.execute(f'select count(*) from "{address.lower()}"').fetchone()[0]
     
     def latest_block(self, address):
-        return self.execute(f'select max(block_number) from "{address}"').fetchone()[0]
+        return self.execute(f'select max(block_number) from "{address.lower()}"').fetchone()[0]
 
     def load_transactions(self, address, update=True, verbose=False, **kwargs):
         if self.apikey is None:
