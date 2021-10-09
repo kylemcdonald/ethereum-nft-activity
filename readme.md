@@ -5,7 +5,7 @@ How much energy does it take to power popular Ethereum-backed CryptoArt platform
 These questions do not have clear answers for two reasons:
 
 1. The overall energy usage and emissions of Ethereum are hard to estimate. I am working on this in a separate repo: [kylemcdonald/ethereum-energy](https://github.com/kylemcdonald/ethereum-energy)
-2. The portion for which a specific user, platform, or transaction might be considered "responsible" for is more of a philosophical question than a technical one. Like many complex systems, there is an indirect relationship between the service and the emissions. I am working on different approaches in this notebook: [Per-Transaction Models](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/Per-Transaction%20Models.ipynb)
+2. The portion for which a specific user, platform, or transaction might be considered "responsible" is more of a philosophical question than a technical one. Like many complex systems, there is an indirect relationship between the service and the emissions. I am working on different approaches in this notebook: [Per-Transaction Models](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/Per-Transaction%20Models.ipynb)
 
 This table represents one method for computing emissions, as of April 29, 2021. The methodology is described below.
 
@@ -37,13 +37,13 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Note: this project requires python3
+Note: this project requires Python 3.
 
 ### `contracts_footprint.py`
 
 This will pull all the transactions from Etherscan, sum the gas and transaction counts, and do a basic emissions estimate. Results are saved in the `/output` directory as JSON or TSV. Run the script with, for example: `python contracts_footprint.py --verbose --tsv data/contracts.json data/nifty-gateway-contracts.json`. 
 
-This may take longer the first time, while your local cache is updated. When updating after a week, it can take 5 minutes or more to download all new transactions. The entire cache can be multiple gigabytes. To reduce this cache size use the `--simplify` flag.
+This may take longer the first time, while your local cache is updated. When updating after a week, it can take 5 minutes or more to download all new transactions. The entire cache can be multiple gigabytes.
 
 This script has a few unique additional flags:
 

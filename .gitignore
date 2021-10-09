@@ -4,3 +4,4 @@ cache*
 __pycache__
 output/*
 .idea
+*.sqlite3

@@ -1,7 +1,6 @@
 import pandas as pd
 from collections import defaultdict
 from ethereum_stats import EthereumStats
-from utils import get_timestamp
 import argparse
 
 parser = argparse.ArgumentParser(description='Compute percentages of NFT activity relative to all Ethereum activity.')

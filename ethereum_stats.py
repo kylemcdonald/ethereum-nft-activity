@@ -13,6 +13,7 @@ class EthereumStats:
             self.update(verbose)
 
         df = pd.read_csv(self.cache_fn)
+        df = df.fillna(0) # important for dailyethburnt
         dates = [e.date() for e in pd.to_datetime(df['Date'])]
         self.dates = dates
 
@@ -21,19 +22,25 @@ class EthereumStats:
             return NearestDict(zip(dates, values))
         
         self.tx_count = build_lookup('tx', int)
-        self.tx_fees = build_lookup('transactionfee', float, 1/1e18)
+        self.miner_fees = build_lookup('transactionfee', float, 1/1e18)
         self.block_count = build_lookup('blocks', int)
         self.block_rewards = build_lookup('blockreward', float)
         self.gas_used = build_lookup('gasused', int)
         self.price = build_lookup('etherprice', float)
         self.hashrate = build_lookup('hashrate', float)
-        
+        self.burnt = build_lookup('dailyethburnt', float)
+
+        tx_fees = [self.miner_fees[e] + self.burnt[e] for e in dates]
+        self.tx_fees = NearestDict(zip(dates, tx_fees))
+
         self.tx_count_total = sum(self.tx_count.values)
-        self.tx_fees_total = sum(self.tx_fees.values)
+        self.miner_fees_total = sum(self.tx_fees.values)
         self.block_count_total = sum(self.block_count.values)
         self.block_rewards_total = sum(self.block_rewards.values)
         self.gas_used_total = sum(self.gas_used.values)
         self.price_total = sum(self.price.values)
+        self.burnt_total = sum(self.burnt.values)
+        self.tx_fees_total = sum(self.tx_fees.values)
 
     def update(self, verbose=False):
         collected = defaultdict(dict)
@@ -48,7 +55,11 @@ class EthereumStats:
                 print('\t', len(res.content), 'bytes')
             content = StringIO(res.content.decode('utf8'))
             rows = pd.read_csv(content)
-            for date, _, value in rows.values:
+            cols = ['Date(UTC)','Value']
+            if len(rows.columns) == 2:
+                cols[1] = 'BurntFees'
+            for date, value in rows[cols].values:
+                date = pd.to_datetime(date).date()
                 collected[date][endpoint] = value
 
         add_source('tx')
@@ -58,6 +69,7 @@ class EthereumStats:
         add_source('gasused')
         add_source('etherprice')
         add_source('hashrate')
+        add_source('dailyethburnt')
 
         df = pd.DataFrame(collected).transpose()
         df.index.name = 'Date'

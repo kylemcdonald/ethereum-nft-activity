@@ -1,32 +1,14 @@
 import requests
-import os
-import json
 import datetime
+import sqlite3
 import time
-
-from simplify_tx import simplify_tx
-
-def etherscan_method_id(tx):
-    return tx['input'][:10]
-
-def etherscan_timestamp(tx):
-    return datetime.datetime.fromtimestamp(int(tx['timeStamp']))
-
-def etherscan_gas_fees(tx):
-    return etherscan_gas_price(tx) * etherscan_gas_used(tx)
-
-def etherscan_gas_price(tx):
-    return int(tx['gasPrice'])
-
-def etherscan_gas_used(tx):
-    return int(tx['gasUsed'])
 
 def filter_transactions(transactions, start_date=None, end_date=None):
     if start_date is None and end_date is None:
         return transactions
     filtered = []
     for tx in transactions:
-        date = etherscan_timestamp(tx).date()
+        date = tx.get_datetime()
         if start_date is not None and date < start_date:
             continue
         if end_date is not None and date >= end_date:
@@ -34,74 +16,103 @@ def filter_transactions(transactions, start_date=None, end_date=None):
         filtered.append(tx)
     return filtered
 
-def sum_gas_used(transactions):
-    return sum([etherscan_gas_used(tx) for tx in transactions])
+class Transaction:
+    def __init__(self, tx_hash, block_number, timestamp, gas_price, gas_used):
+        self.tx_hash = tx_hash
+        self.block_number = block_number
+        self.timestamp = timestamp
+        self.gas_price = gas_price
+        self.gas_used = gas_used
 
-def safe_dump(fn, obj):
-    with open(fn, 'w') as f:
-        try:
-            json.dump(obj, f, separators=(',', ':'))
-        except:
-            # truncate files instead of writing corrupt json
-            f.truncate()
-            raise
+    def __repr__(self):
+        return '0x' + self.tx_hash.hex()
+
+    def get_fees(self):
+        return self.gas_price * self.gas_used
+
+    def get_datetime(self):
+        return datetime.datetime.fromtimestamp(self.timestamp)
+
+def sum_gas_used(transactions):
+    return sum([tx.gas_used for tx in transactions])
+
+def hash0x_to_bytes(hash0x):
+    return bytearray.fromhex(hash0x[2:])
+
+def build_rows(transactions):
+    for tx in transactions:
+        yield (
+            hash0x_to_bytes(tx['hash']),
+            int(tx['blockNumber']),
+            int(tx['timeStamp']),
+            int(tx['gasPrice']),
+            int(tx['gasUsed']))
 
 class Etherscan():
-    def __init__(self, apikey=None, cache_dir='cache'):
+    def __init__(self, apikey=None, db_file='transactions.sqlite3', read_only=False):
         self.apikey = apikey
-        self.cache_dir = cache_dir
-        os.makedirs(self.cache_dir, exist_ok=True)
+        self.db_file = db_file
+        flags = '?mode=ro' if read_only else ''
+        self.db = sqlite3.connect(f'file:{db_file}{flags}', uri=True)
+    
+    def execute(self, cmd):
+        return self.db.cursor().execute(cmd)
+    
+    def insert_transactions(self, address, transactions):
+        cmd = f'insert or replace into "{address}" values (?, ?, ?, ?, ?)'
+        self.db.cursor().executemany(cmd, build_rows(transactions))
         
-    def load_abi(self, address, verbose=False):
-        fn = os.path.join(self.cache_dir, address + '.abi.json')
-        if os.path.exists(fn):
-            with open(fn) as f:
-                result = f.read()
-        else:
-            url = f'https://api.etherscan.io/api?module=contract&action=getabi&address={address}&apikey={self.apikey}'
-            response = requests.get(url)
-            result = response.json()['result']
-            with open(fn, 'w') as f:
-                f.write(result)
-        if result == 'Contract source code not verified':
-            return None
-        return json.loads(result)
+    def create_transactions_table(self, address):
+        return self.execute(
+            f'create table if not exists "{address}" (\
+            hash blob primary key, \
+            block_number integer key, \
+            timestamp integer, \
+            gas_price integer, \
+            gas_used integer)')
+    
+    def list_transactions(self, address):
+        for row in self.execute(f'select * from "{address}"'):
+            yield Transaction(*row)
+
+    def count_transactions(self, address):
+        return self.execute(f'select count(*) from "{address}"').fetchone()[0]
+    
+    def latest_block(self, address):
+        return self.execute(f'select max(block_number) from "{address}"').fetchone()[0]
 
     def load_transactions(self, address, update=True, verbose=False, **kwargs):
-        """
-        Load transactions from cache if available, check Etherscan for updates, and
-        save result to cache.
-        """
         if self.apikey is None:
             update = False
         if verbose:
             print('load_transactions', address)
-        fn = os.path.join(self.cache_dir, address + '.json')
-        startblock = None
-        transactions = []
-        if os.path.exists(fn):
-            with open(fn) as f:
-                try:
-                    transactions = json.load(f)
-                except json.decoder.JSONDecodeError:
-                    if verbose:
-                        print('ignoring error while loading', fn)
-                    pass
-            if not update:
-                return transactions
-            if len(transactions):
-                startblock = max([int(e['blockNumber']) for e in transactions])
-                if verbose:
-                    print('starting from cache at', startblock, 'with', len(transactions))
-        # add new transactions
-        new_transactions = self.fetch_transactions(address, startblock=startblock, verbose=verbose, **kwargs)
-        # dedupe
-        if len(new_transactions) > 0:
-            transactions.extend(new_transactions)
-            transactions = list({e['hash']:e for e in transactions}.values())
-            safe_dump(fn, transactions)
-        return transactions
+        self.create_transactions_table(address)        
+        if not update:
+            return self.list_transactions(address)
+        self.fetch_transactions(address, verbose=verbose, **kwargs)
+        self.db.commit()
+        return self.list_transactions(address)
 
+    def fetch_transactions(self, address, endblock=None, verbose=False):
+        while True:
+            
+            startblock = self.latest_block(address)
+            if verbose:
+                if startblock is None:
+                    print('startblock is None')
+                else:
+                    print('startblock', startblock)
+                
+            transactions = self.fetch_transactions_in_range(address, startblock, endblock)
+            self.insert_transactions(address, transactions)
+            
+            if len(transactions) < 10000:
+                if verbose:
+                    print('done', len(transactions), 'transactions')
+                break
+            else:
+                print('loaded', len(transactions), 'transactions')
+    
     def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=1):
         url = f'https://api.etherscan.io/api?module=account&apikey={self.apikey}&action=txlist&address={address}'
         if startblock is not None:
@@ -120,34 +131,3 @@ class Etherscan():
         except:
             print('error parsing transactions', url)
             return []
-
-    def fetch_transactions(self, address, startblock=None, endblock=None, simplify=True, verbose=False):
-        """
-        To keep the entire inputData, set simplify=False.
-        """
-        all_transactions = []
-        while True:
-            transactions = self.fetch_transactions_in_range(address, startblock, endblock)
-            try:
-                if simplify:
-                    transactions = list(map(simplify_tx, transactions))
-            except TypeError:
-                print('error', address, 'start block', startblock, 'end block', endblock, 'transactions', transactions)
-            all_transactions.extend(transactions)
-            if verbose:
-                print('fetching block', startblock, 'total transactions', len(all_transactions))
-            if len(transactions) < 1000:
-                break
-            # do not incremement the block, in case there are multiple transactions in one block
-            # but spread across paginated results. we dedupe later.
-            startblock = int(transactions[-1]['blockNumber'])
-        return all_transactions
-
-    def load_transactions_multiple(self, addresses, verbose=False, **kwargs):
-        transactions = []
-        for address in addresses:
-            if verbose:
-                print('load_transactions', address)
-            for tx in self.load_transactions(address, **kwargs):
-                transactions.append(tx)
-        return transactions
