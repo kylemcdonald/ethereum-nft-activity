@@ -46,10 +46,13 @@ def list_nifty_gateway(update=True, verbose=False):
     contracts = [e['contractAddress'] for e in results]
     exhibition_contracts.extend(contracts)
     if verbose:
+        print('total', len(exhibition_contracts))
         print('Done.')
 
     filtered = {}
     combined = set(exhibition_contracts + drop_contracts)
+    if verbose:
+        print(f'Combined: total {len(combined)}')
     for i, hash in enumerate(combined):
         if not valid_hash(hash):
             continue

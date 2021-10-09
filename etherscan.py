@@ -48,6 +48,9 @@ def build_rows(transactions):
             int(tx['gasPrice']),
             int(tx['gasUsed']))
 
+def addr(address):
+    return f'"{address.lower()}"'
+
 class Etherscan():
     def __init__(self, apikey=None, db_file='transactions.sqlite3', read_only=False):
         self.apikey = apikey
@@ -55,38 +58,67 @@ class Etherscan():
         flags = '?mode=ro' if read_only else ''
         self.db = sqlite3.connect(f'file:{db_file}{flags}', uri=True)
     
-    def execute(self, cmd):
-        return self.db.cursor().execute(cmd)
+    def execute(self, query):
+        return self.db.cursor().execute(query)
+
+    def list_contracts(self):
+        query = 'SELECT name FROM sqlite_master WHERE type="table"'
+        for row in self.execute(query):
+            yield row[0]
     
     def insert_transactions(self, address, transactions):
-        cmd = f'insert or replace into "{address.lower()}" values (?, ?, ?, ?, ?)'
-        self.db.cursor().executemany(cmd, build_rows(transactions))
+        query = f'INSERT OR REPLACE INTO {addr(address)} VALUES (?, ?, ?, ?, ?)'
+        self.db.cursor().executemany(query, build_rows(transactions))
         
     def create_transactions_table(self, address):
         return self.execute(
-            f'create table if not exists "{address.lower()}" (\
-            hash blob primary key, \
-            block_number integer key, \
-            timestamp integer, \
-            gas_price integer, \
-            gas_used integer)')
+            f'CREATE TABLE IF NOT EXISTS {addr(address)} (\
+            hash BLOB PRIMARY KEY, \
+            block_number INTEGER KEY, \
+            timestamp INTEGER, \
+            gas_price INTEGER, \
+            gas_used INTEGER)')
     
     def list_transactions(self, address):
-        for row in self.execute(f'select * from "{address.lower()}"'):
+        query = f'SELECT * FROM {addr(address)}'
+        for row in self.execute(query):
             yield Transaction(*row)
 
     def count_transactions(self, address):
-        return self.execute(f'select count(*) from "{address.lower()}"').fetchone()[0]
-    
-    def latest_block(self, address):
-        return self.execute(f'select max(block_number) from "{address.lower()}"').fetchone()[0]
+        query = f'SELECT COUNT(*) FROM {addr(address)}'
+        return self.execute(query).fetchone()[0]
 
-    def load_transactions(self, address, update=True, verbose=False, **kwargs):
+    def latest_transaction(self, address):
+        query = f'SELECT * FROM {addr(address)} ORDER BY timestamp DESC LIMIT 1'
+        row = self.execute(query).fetchone()
+        if row is not None:
+            return Transaction(*row)
+
+    def latest_datetime(self, address):
+        query = f'SELECT MAX(timestamp) FROM {addr(address)}'
+        timestamp = self.execute(query).fetchone()[0]
+        if timestamp is not None:
+            return datetime.datetime.fromtimestamp(timestamp)
+
+    def latest_block(self, address):
+        query = f'SELECT MAX(block_number) FROM {addr(address)}'
+        return self.execute(query).fetchone()[0]
+
+    def load_transactions(self, address, update=True, update_active=None, verbose=False, **kwargs):
         if self.apikey is None:
             update = False
         if verbose:
             print('load_transactions', address)
-        self.create_transactions_table(address)        
+        self.create_transactions_table(address)   
+        if update_active is not None:
+            now = datetime.datetime.now()
+            latest = self.latest_datetime(address)
+            if latest is not None:
+                seconds_per_day = 24 * 60 * 60
+                days = (now - latest).total_seconds() / seconds_per_day
+                update = days < update_active
+                if verbose:
+                    print(f'latest transaction {days:.1f} day(s) ago')
         if not update:
             return self.list_transactions(address)
         self.fetch_transactions(address, verbose=verbose, **kwargs)

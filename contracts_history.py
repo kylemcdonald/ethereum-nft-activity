@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser(description='Calculate total gas used and trans
 parser.add_argument('contracts', nargs='+', help='List of contract JSON filenames')
 parser.add_argument('--prefix', type=str, default=get_timestamp(), help='Output file prefix. Default: date and time.')
 parser.add_argument('--noupdate', action='store_false', help='Do not update cache.')
+parser.add_argument('--update_active', type=int, default=None, help='Only update contracts that have had transactions in the last N days.')
 parser.add_argument('--verbose', action='store_true', help='Verbose mode.')
 args = parser.parse_args()
 
@@ -27,6 +28,7 @@ for name_kind, address in contracts.items():
 
     transactions = etherscan.load_transactions(address,
         update=args.noupdate,
+        update_active=args.update_active,
         verbose=args.verbose)
         
     name, kind = split_name_kind(name_kind)
