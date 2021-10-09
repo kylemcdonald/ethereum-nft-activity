@@ -7,19 +7,21 @@ These questions do not have clear answers for two reasons:
 1. The overall energy usage and emissions of Ethereum are hard to estimate. I am working on this in a separate repo: [kylemcdonald/ethereum-energy](https://github.com/kylemcdonald/ethereum-energy)
 2. The portion for which a specific user, platform, or transaction might be considered "responsible" is more of a philosophical question than a technical one. Like many complex systems, there is an indirect relationship between the service and the emissions. I am working on different approaches in this notebook: [Per-Transaction Models](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/Per-Transaction%20Models.ipynb)
 
-This table represents one method for computing emissions, as of April 29, 2021. The methodology is described below.
+This table represents one method for computing emissions, as of October 8, 2021. The methodology is described below.
 
-| Name          | Gas          | Transactions | kgCO2    |
-|---------------|--------------|--------------|----------|
-| Async         |   1638562820 |        16335 |   464189 |
-| Foundation    |  20489990935 |       122582 | 10195179 |
-| Known Origin  |   5129939934 |        21156 |  1696116 |
-| Makersplace   |  24799705248 |        78510 |  7768245 |
-| Nifty Gateway |  49791570029 |       202966 | 22253639 |
-| OpenSea       | 217410494380 |      1016553 | 82838112 |
-| Rarible       |  38112831226 |       293205 | 15496197 |
-| SuperRare     |  18267224757 |       195806 |  6197049 |
-| Zora          |   2317359284 |         9111 |  1091823 |
+| Name          | Gas           | Transactions | kgCO2     |
+|---------------|---------------|--------------|-----------| 
+| Art Blocks    | 8756400546    | 73620        | 3336893   | 
+| Async         | 2682742201    | 23928        | 905177    | 
+| Foundation    | 70824065154   | 395269       | 31629583  | 
+| KnownOrigin   | 11452164645   | 61186        | 3977724   | 
+| Makersplace   | 32657198905   | 110226       | 10932105  | 
+| Nifty Gateway | 1445519970    | 29279        | 661300    | 
+| OpenSea       | 1592368367580 | 8888770      | 655648763 | 
+| Rarible       | 171642953984  | 1246418      | 67217701  | 
+| SuperRare     | 24336594302   | 251460       | 8772221   | 
+| Zora          | 4085215807    | 15165        | 1844186   | 
+
 
 ## Preparation
 
@@ -55,10 +57,7 @@ This script has a few unique additional flags:
 
 This will pull all the transactions from Etherscan, sum the transaction fees and gas used, and group by day and platform. Results are saved in the `/output` directory as CSV files. Run the script with, for example: `python contracts_history.py --verbose data/contracts.json data/nifty-gateway-contracts.json`
 
-The most recent results are cached here:
-
-- [Transaction fees](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/output/cryptoart-fees.csv)
-- [Gas usage](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/output/cryptoart-gas.csv)
+The most recent results are [cached in the gh_pages branch](https://github.com/kylemcdonald/ethereum-nft-activity/tree/gh-pages/output).
 
 ### Additional flags
 

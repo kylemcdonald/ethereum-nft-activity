@@ -1,4 +1,3 @@
-import json
 import argparse
 import datetime
 from collections import defaultdict
@@ -14,7 +13,6 @@ parser.add_argument('--noupdate', action='store_false', help='Do not update cach
 parser.add_argument('--startdate', default='', help='YYYY-MM-DD start date for transactions.')
 parser.add_argument('--enddate', default='', help='YYYY-MM-DD end date for transactions.')
 parser.add_argument('--tsv', action='store_true', help='Output to TSV instead of JSON')
-parser.add_argument('--simplify', action='store_true', help='Simplify transactions to minimize cache size.')
 parser.add_argument('--verbose', action='store_true', help='Verbose mode.')
 args = parser.parse_args()
 
@@ -40,10 +38,9 @@ for name_kind, address in contracts.items():
     if args.verbose:
         print(name_kind)
 
-    transactions = etherscan.load_transactions(address,
+    transactions = list(etherscan.load_transactions(address,
         update=args.noupdate,
-        simplify=args.simplify,
-        verbose=args.verbose)
+        verbose=args.verbose))
 
     transactions = filter_transactions(transactions, start_date, end_date)
     gas = sum_gas_used(transactions)
