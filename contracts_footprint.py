@@ -25,7 +25,7 @@ if args.enddate != '':
 
 api_key = load_etherscan_api_key()
 contracts = load_contracts(args.contracts)
-etherscan = Etherscan(api_key)
+etherscan = Etherscan(api_key, read_only=not args.noupdate)
 ethereum_footprint = EthereumFootprint()
 
 summary = defaultdict(lambda: defaultdict(int))
