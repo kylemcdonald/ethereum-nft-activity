@@ -56,7 +56,6 @@ class Etherscan():
         self.apikey = apikey
         flags = '?mode=ro' if read_only else ''
         self.db = sqlite3.connect(f'file:{db_file}{flags}', uri=True)
-        self.db.execute('PRAGMA journal_mode=wal')
 
     def __del__(self):
         self.db.close()
