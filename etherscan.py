@@ -56,6 +56,7 @@ class Etherscan():
         self.apikey = apikey
         flags = '?mode=ro' if read_only else ''
         self.db = sqlite3.connect(f'file:{db_file}{flags}', uri=True)
+        self.db.execute('PRAGMA journal_mode=wal')
 
     def __del__(self):
         self.db.close()
@@ -124,28 +125,33 @@ class Etherscan():
         if not update:
             return self.list_transactions(address)
         self.fetch_transactions(address, verbose=verbose, **kwargs)
-        self.db.commit()
         return self.list_transactions(address)
 
     def fetch_transactions(self, address, endblock=None, verbose=False):
+        last_startblock = None
         while True:
-            
             startblock = self.latest_block(address)
+
+            # quit if we haven't made progress
+            if startblock == last_startblock:
+                if verbose:
+                    print('done')
+                break
+
             if verbose:
                 if startblock is None:
                     print('startblock is None')
                 else:
                     print('startblock', startblock)
-                
+            
             transactions = self.fetch_transactions_in_range(address, startblock, endblock)
             self.insert_transactions(address, transactions)
-            
-            if len(transactions) < 10000:
-                if verbose:
-                    print('done', len(transactions), 'transactions')
-                break
-            else:
-                print('loaded', len(transactions), 'transactions')
+
+            if verbose:
+                print(f'loaded {len(transactions)} transactions')
+
+            last_startblock = startblock
+        self.db.commit()
     
     def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=1):
         url = f'https://api.etherscan.io/api?module=account&apikey={self.apikey}&action=txlist&address={address}'
