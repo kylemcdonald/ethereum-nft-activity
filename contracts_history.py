@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser(description='Calculate total gas used and trans
 parser.add_argument('contracts', nargs='+', help='List of contract JSON filenames')
 parser.add_argument('--prefix', type=str, default=get_timestamp(), help='Output file prefix. Default: date and time.')
 parser.add_argument('--noupdate', action='store_false', help='Do not update cache.')
+parser.add_argument('--nosave', action='store_true', help='Do not save output.')
 parser.add_argument('--update_active', type=int, default=None, help='Only update contracts that have had transactions in the last N days.')
 parser.add_argument('--verbose', action='store_true', help='Verbose mode.')
 args = parser.parse_args()
@@ -20,6 +21,15 @@ etherscan = Etherscan(api_key)
 gas_data = defaultdict(lambda:defaultdict(int))
 fee_data = defaultdict(lambda:defaultdict(int))
 tx_count_data = defaultdict(lambda:defaultdict(int))
+
+global_gas_fees = 0
+global_gas_used = 0
+global_tx_count = 0
+
+def print_stats(tx_count, gas_used, gas_fees):
+    print(f'\ttransactions {tx_count:,}')
+    print(f'\tgas_used {gas_used:,}')
+    print(f'\tgas_fees {gas_fees/1e18:,.2f} ETH ({gas_fees})')
 
 for name_kind, address in contracts.items():
 
@@ -46,11 +56,17 @@ for name_kind, address in contracts.items():
         all_gas_fees += gas_fees
         tx_count_data[name][date] += 1
         total_transactions += 1
+
+    global_gas_fees += all_gas_fees
+    global_gas_used += all_gas_used
+    global_tx_count += total_transactions
     
     if args.verbose:
-        print(f'\ttransactions {total_transactions:,}')
-        print(f'\tgas_used {all_gas_used:,}')
-        print(f'\tgas_fees {all_gas_fees/1e18:,.2f} ETH')
+        print_stats(total_transactions, all_gas_used, all_gas_fees)
+
+if args.verbose:
+    print('Totals across all contracts:')
+    print_stats(global_tx_count, global_gas_used, global_gas_fees)
 
 def save_csv(data, fn, kind, scaling=None):
     if args.verbose:
@@ -64,7 +80,8 @@ def save_csv(data, fn, kind, scaling=None):
     df = df.astype(kind)
     df.to_csv(fn)
 
-prefix = args.prefix
-save_csv(fee_data, f'output/{prefix}-fees.csv', float, 1/1e18)
-save_csv(gas_data, f'output/{prefix}-gas.csv', int)
-save_csv(tx_count_data, f'output/{prefix}-tx-count.csv', int)
+if not args.nosave:
+    prefix = args.prefix
+    save_csv(fee_data, f'output/{prefix}-fees.csv', float, 1/1e18)
+    save_csv(gas_data, f'output/{prefix}-gas.csv', int)
+    save_csv(tx_count_data, f'output/{prefix}-tx-count.csv', int)

@@ -54,9 +54,11 @@ def addr(address):
 class Etherscan():
     def __init__(self, apikey=None, db_file='transactions.sqlite3', read_only=False):
         self.apikey = apikey
-        self.db_file = db_file
         flags = '?mode=ro' if read_only else ''
         self.db = sqlite3.connect(f'file:{db_file}{flags}', uri=True)
+
+    def __del__(self):
+        self.db.close()
     
     def execute(self, query):
         return self.db.cursor().execute(query)
