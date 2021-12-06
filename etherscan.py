@@ -131,8 +131,8 @@ class Etherscan():
         while True:
             startblock = self.latest_block(address)
 
-            # quit if we haven't made progress
-            if startblock == last_startblock:
+            # quit if we have a block, but haven't made progress
+            if startblock is not None and startblock == last_startblock:
                 if verbose:
                     print('done')
                 break
