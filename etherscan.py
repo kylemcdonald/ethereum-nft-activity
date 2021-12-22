@@ -127,29 +127,31 @@ class Etherscan():
         return self.list_transactions(address)
 
     def fetch_transactions(self, address, endblock=None, verbose=False):
-        last_startblock = None
+        # start by asking for the latest block on this address
+        # if we do not have cached data, this will return None
+        startblock = self.latest_block(address)
         while True:
-            startblock = self.latest_block(address)
-
-            # quit if we have a block, but haven't made progress
-            if startblock is not None and startblock == last_startblock:
-                if verbose:
-                    print('done')
-                break
-
             if verbose:
-                if startblock is None:
-                    print('startblock is None')
-                else:
-                    print('startblock', startblock)
+                print('startblock', startblock)
             
+            # download transactions between startblock and endblock
             transactions = self.fetch_transactions_in_range(address, startblock, endblock)
             self.insert_transactions(address, transactions)
 
             if verbose:
                 print(f'loaded {len(transactions)} transactions')
 
+            # save the last startblock
             last_startblock = startblock
+
+            # and get a new one based on the most recent transactions
+            startblock = self.latest_block(address)
+            
+            # if we can't get a block, or haven't made progress, then quit
+            if startblock is None or startblock == last_startblock:
+                if verbose:
+                    print('done')
+                break
         self.db.commit()
     
     def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=1):
