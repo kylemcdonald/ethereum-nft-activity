@@ -36,6 +36,12 @@ class Transaction:
 def sum_gas_used(transactions):
     return sum([tx.gas_used for tx in transactions])
 
+def sum_fees(transactions):
+    return sum([tx.get_fees() for tx in transactions])
+
+def wei_to_eth(wei):
+    return wei * 1e-18
+
 def hash0x_to_bytes(hash0x):
     return bytearray.fromhex(hash0x[2:])
 

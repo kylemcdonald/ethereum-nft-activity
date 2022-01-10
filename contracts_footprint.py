@@ -2,7 +2,7 @@ import argparse
 import datetime
 from collections import defaultdict
 
-from etherscan import Etherscan, filter_transactions, sum_gas_used
+from etherscan import Etherscan, filter_transactions, sum_fees, wei_to_eth
 from ethereum_footprint import EthereumFootprint
 from utils import load_contracts, load_etherscan_api_key, write_results_tsv, write_results_json, split_name_kind
 
@@ -43,11 +43,11 @@ for name_kind, address in contracts.items():
         verbose=args.verbose))
 
     transactions = filter_transactions(transactions, start_date, end_date)
-    gas = sum_gas_used(transactions)
+    fees = wei_to_eth(sum_fees(transactions))
     kgco2 = int(ethereum_footprint.sum_kgco2(transactions))
     name, kind = split_name_kind(name_kind)
-    summary[name]['gas'] += gas
     summary[name]['transactions'] += len(transactions)
+    summary[name]['fees'] += fees
     summary[name]['kgco2'] += kgco2
 
     if args.separate:
@@ -55,7 +55,7 @@ for name_kind, address in contracts.items():
             'name': name,
             'kind': kind,
             'address': address,
-            'gas': gas,
+            'fees': fees,
             'transactions': len(transactions),
             'kgco2': kgco2
         }
@@ -63,12 +63,12 @@ for name_kind, address in contracts.items():
 
 if not args.separate:
     for name in sorted(summary.keys()):
-        gas = summary[name]['gas']
         transactions = summary[name]['transactions']
+        fees = summary[name]['fees']
         kgco2 = summary[name]['kgco2']
         row = {
             'name': name,
-            'gas': gas,
+            'fees': fees,
             'transactions': transactions,
             'kgco2': kgco2
         }
