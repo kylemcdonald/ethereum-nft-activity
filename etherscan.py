@@ -46,13 +46,18 @@ def hash0x_to_bytes(hash0x):
     return bytearray.fromhex(hash0x[2:])
 
 def build_rows(transactions):
-    for tx in transactions:
-        yield (
-            hash0x_to_bytes(tx['hash']),
-            int(tx['blockNumber']),
-            int(tx['timeStamp']),
-            int(tx['gasPrice']),
-            int(tx['gasUsed']))
+    for i, tx in enumerate(transactions):
+        try:
+            yield (
+                hash0x_to_bytes(tx['hash']),
+                int(tx['blockNumber']),
+                int(tx['timeStamp']),
+                int(tx['gasPrice']),
+                int(tx['gasUsed']))
+        except TypeError:
+            print(f'Failed on transaction {i} of {len(transactions)}')
+            print(tx)
+            raise
 
 def addr(address):
     return f'"{address.lower()}"'
