@@ -47,17 +47,12 @@ def hash0x_to_bytes(hash0x):
 
 def build_rows(transactions):
     for i, tx in enumerate(transactions):
-        try:
-            yield (
-                hash0x_to_bytes(tx['hash']),
-                int(tx['blockNumber']),
-                int(tx['timeStamp']),
-                int(tx['gasPrice']),
-                int(tx['gasUsed']))
-        except TypeError:
-            print(f'Failed on transaction {i} of {len(transactions)}')
-            print(tx)
-            raise
+        yield (
+            hash0x_to_bytes(tx['hash']),
+            int(tx['blockNumber']),
+            int(tx['timeStamp']),
+            int(tx['gasPrice']),
+            int(tx['gasUsed']))
 
 def addr(address):
     return f'"{address.lower()}"'
@@ -196,7 +191,7 @@ class Etherscan():
                 break
         self.db.commit()
     
-    def fetch_transactions_in_range(self, address, startblock, endblock, action='txlist', ratelimit_sleep=1):
+    def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=1, action='txlist'):
         url = f'https://api.etherscan.io/api?module=account&apikey={self.apikey}&action={action}&address={address}'
         if startblock is not None:
             url += f'&startblock={startblock}'
