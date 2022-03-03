@@ -8,7 +8,7 @@ def filter_transactions(transactions, start_date=None, end_date=None):
         return transactions
     filtered = []
     for tx in transactions:
-        date = tx.get_datetime()
+        date = tx.get_datetime().date()
         if start_date is not None and date < start_date:
             continue
         if end_date is not None and date >= end_date:
