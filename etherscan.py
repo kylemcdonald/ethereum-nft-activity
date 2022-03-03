@@ -193,7 +193,7 @@ class Etherscan():
         self.db.commit()
     
     @sleep_and_retry
-    @limits(calls=5, period=1)
+    @limits(calls=4, period=1)
     def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=0.5, action='txlist'):
         url = f'https://api.etherscan.io/api?module=account&apikey={self.apikey}&action={action}&address={address}'
         if startblock is not None:
