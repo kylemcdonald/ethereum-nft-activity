@@ -76,9 +76,6 @@ def valid_hash(hash, blocklist=[]):
     return hash.startswith('0x') and len(hash) == 42
 
 def prefix_contracts(prefix, contracts, blocklist=[]):
-    filtered = {}
-    for i, hash in enumerate(sorted(contracts)):
-        if not valid_hash(hash, blocklist):
-            continue
-        filtered[f'{prefix}/{i}'] = hash
-    return filtered
+    filtered = filter(lambda e: valid_hash(e, blocklist), contracts)
+    prefixed = {f'{prefix}/{i}': e for i,e in enumerate(sorted(filtered))}
+    return prefixed
