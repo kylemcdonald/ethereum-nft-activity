@@ -6,6 +6,7 @@
   "Art Blocks/Deployer": "0x96dc73c8b5969608c77375f085949744b5177660",
   "Foundation/ERC-721": "0xcda72070e455bb31c7690a170224ce43623d0b6f",
   "Foundation/FND NFT (FNDNFT) ERC-20": "0x3b3ee1931dc30c1957379fac9aba94d1c48a5405",
+  "Foundation/Contract Deployer": "0x3b612a5b49e025a6e4ba4ee4fb1ef46d13588059",
   "KnownOrigin/ArtistAcceptingBids": "0x921ade9018eec4a01e41e80a7eeba982b61724ec",
   "KnownOrigin/ArtistAcceptingBidsV2": "0x848b0ea643e5a352d78e2c0c12a2dd8c96fec639",
   "KnownOrigin/ArtistEditionControls": "0x06c741e6df49d7fda1f27f75fffd238d87619ba1",
