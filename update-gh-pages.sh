@@ -3,6 +3,9 @@
 # start on main
 git checkout main
 
+# update foundation contracts
+python3 foundation.py
+
 # update nifty gateway contracts
 python3 nifty_gateway.py
 
@@ -14,6 +17,7 @@ python3 contracts_history.py \
     --prefix "nft" \
     --verbose \
     data/nifty-gateway-contracts.json \
+    data/foundation-contracts.json \
     data/marketplaces-collectibles-games.json
 
 # compute percentages

@@ -132,6 +132,37 @@ class Etherscan():
         self.fetch_transactions(address, verbose=verbose, **kwargs)
         return self.list_transactions(address)
 
+    def fetch_transactions_internal(self, address, endblock=None, verbose=False):
+        all_transactions = []
+        startblock = None
+        while True:
+            if verbose:
+                print('startblock', startblock)
+            
+            # download transactions between startblock and endblock
+            transactions = self.fetch_transactions_in_range(address, startblock, endblock, action='txlistinternal')
+            all_transactions.extend(transactions)
+
+            if verbose:
+                print(f'loaded {len(transactions)} transactions')
+
+            # save the last startblock
+            last_startblock = startblock
+
+            # and get a new one based on the most recent transactions
+            startblock = max([int(e['blockNumber']) for e in transactions])
+            
+            # if we can't get a block, or haven't made progress, then quit
+            if startblock is None or startblock == last_startblock:
+                if verbose:
+                    print('done')
+                break
+
+        # remove duplicates
+        all_transactions = list({e['hash']: e for e in all_transactions}.values())
+
+        return all_transactions
+
     def fetch_transactions(self, address, endblock=None, verbose=False):
         # start by asking for the latest block on this address
         # if we do not have cached data, this will return None
@@ -160,8 +191,8 @@ class Etherscan():
                 break
         self.db.commit()
     
-    def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=1):
-        url = f'https://api.etherscan.io/api?module=account&apikey={self.apikey}&action=txlist&address={address}'
+    def fetch_transactions_in_range(self, address, startblock, endblock, action='txlist', ratelimit_sleep=1):
+        url = f'https://api.etherscan.io/api?module=account&apikey={self.apikey}&action={action}&address={address}'
         if startblock is not None:
             url += f'&startblock={startblock}'
         if endblock is not None:

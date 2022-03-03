@@ -69,3 +69,16 @@ def split_name_kind(name_kind):
     name = '/'.join(parts[:-1])
     kind = parts[-1]
     return name, kind
+
+def valid_hash(hash, blocklist=[]):
+    if hash in blocklist:
+        return False
+    return hash.startswith('0x') and len(hash) == 42
+
+def prefix_contracts(prefix, contracts, blocklist=[]):
+    filtered = {}
+    for i, hash in enumerate(sorted(contracts)):
+        if not valid_hash(hash, blocklist):
+            continue
+        filtered[f'{prefix}/{i}'] = hash
+    return filtered
