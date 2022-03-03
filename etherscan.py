@@ -2,6 +2,7 @@ import requests
 import datetime
 import sqlite3
 import time
+from ratelimit import limits, sleep_and_retry
 
 def filter_transactions(transactions, start_date=None, end_date=None):
     if start_date is None and end_date is None:
@@ -191,7 +192,9 @@ class Etherscan():
                 break
         self.db.commit()
     
-    def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=1, action='txlist'):
+    @sleep_and_retry
+    @limits(calls=5, period=1)
+    def fetch_transactions_in_range(self, address, startblock, endblock, ratelimit_sleep=0.5, action='txlist'):
         url = f'https://api.etherscan.io/api?module=account&apikey={self.apikey}&action={action}&address={address}'
         if startblock is not None:
             url += f'&startblock={startblock}'
