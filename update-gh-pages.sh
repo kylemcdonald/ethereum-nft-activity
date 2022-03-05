@@ -18,7 +18,7 @@ python3 contracts_history.py \
     --verbose \
     data/nifty-gateway-contracts.json \
     data/foundation-contracts.json \
-    data/marketplaces-collectibles-games.json
+    data/other-nft-dapps.json
 
 # compute percentages
 python3 compute_percentages.py nft

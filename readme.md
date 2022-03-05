@@ -94,11 +94,7 @@ To modify this code so that it works with more platforms, add every possible con
 '<Platform Name>/<Contract Name>': '<0xAddress>'
 ```
 
-Additionally, any NFT-specific contracts (e.g. ERC-721 and compatible) should be added to the `data/marketplaces-collectibles-games.json` file, with a similar format.
-
 Then [submit a pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) back to this repository. Thanks in advance!
-
-To track Cryptokitties, you will need to explicitly remove the Cryptokitties contract from the blocklist in `etherscan.py`. Cryptokitties are blocked by default because there is a collection of Momo Wang Cryptokitties that have been grafted onto the Nifty Gateway marketplace that would otherwise require this script to pull all Cryptokitties ever.
 
 ## Contracts and Addresses
 
