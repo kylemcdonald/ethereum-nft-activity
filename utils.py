@@ -79,3 +79,10 @@ def prefix_contracts(prefix, contracts, blocklist=[]):
     filtered = filter(lambda e: valid_hash(e, blocklist), contracts)
     prefixed = {f'{prefix}/{i}': e for i,e in enumerate(sorted(filtered))}
     return prefixed
+
+# list all contracts that are already known to belong to other platforms
+# this allows us to avoid double-counting things listed on nifty gateway
+# that are actually created elsewhere, like cryptokitties
+def generate_blocklist():
+    contracts = load_contracts(['data/contracts.json', 'data/other-nft-dapps.json'])
+    return list(contracts.values())

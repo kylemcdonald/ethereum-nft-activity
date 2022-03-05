@@ -2,11 +2,7 @@ import requests
 import json
 import os
 from itertools import count
-from utils import valid_hash, prefix_contracts
-
-blocklist = [
-    '0x06012c8cf97bead5deae237070f9587f8e7a266d' # cryptokitties
-]
+from utils import valid_hash, prefix_contracts, generate_blocklist
 
 def list_nifty_gateway(update=True, verbose=False):
     cache_fn = 'data/nifty-gateway-contracts.json'
@@ -45,6 +41,7 @@ def list_nifty_gateway(update=True, verbose=False):
     if verbose:
         print(f'Combined: total {len(combined)}')
 
+    blocklist = generate_blocklist()
     prefixed = prefix_contracts('Nifty Gateway', combined, blocklist)
 
     if verbose:
