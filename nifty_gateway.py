@@ -7,21 +7,22 @@ from utils import valid_hash, prefix_contracts, generate_blocklist
 def list_nifty_gateway(update=True, verbose=False):
     cache_fn = 'data/nifty-gateway-contracts.json'
 
-    cache = None
-    known_contracts = []
+    cache = {}
     if os.path.exists(cache_fn):
         if verbose:
             print('Loading Nifty Gateway contracts from cache...')
         with open(cache_fn) as f:
             cache = json.load(f)
-        known_contracts = list(cache.values())
 
-    if not update and cache is not None:
+    if not update:
         if verbose:
             print('Returning Nifty Gateway contracts from cache...')
         return cache
 
-    drop_contracts = []
+    cache = {v:k for k,v in cache.items()} # swap key/value
+
+    blocklist = generate_blocklist()
+    
     if verbose:
         print('Downloading from drops...')
     for current_page in count(1):
@@ -30,27 +31,29 @@ def list_nifty_gateway(update=True, verbose=False):
         results = json.loads(res.content)['listOfDrops']
         if len(results) == 0:
             break
-        contracts = [item['contractAddress'] for drop in results for item in drop['Exhibitions']]
-        drop_contracts.extend(contracts)
+        for drop in results:
+            for item in drop['Exhibitions']:
+                contract = item['contractAddress']
+                url = item['storeURL']
+                key = 'Nifty Gateway/' + url
+                if contract in blocklist:
+                    print('skipping', key, contract)
+                    break
+                cache[contract] = key
         if verbose:
-            print('Page', current_page, 'total', len(drop_contracts))
+            print('Page', current_page, 'total', len(cache))
     if verbose:
         print('Done.')
 
-    combined = set(known_contracts + drop_contracts)
     if verbose:
-        print(f'Combined: total {len(combined)}')
+        print(f'Filtered: total {len(cache)}')
 
-    blocklist = generate_blocklist()
-    prefixed = prefix_contracts('Nifty Gateway', combined, blocklist)
-
-    if verbose:
-        print(f'Filtered: total {len(prefixed)}')
+    cache = {v:k for k,v in cache.items()} # swap key/value
 
     with open(cache_fn, 'w') as f:
-        json.dump(prefixed, f, indent=2)
+        json.dump(cache, f, indent=2)
 
-    return prefixed
+    return cache
 
 if __name__ == '__main__':
     list_nifty_gateway(update=True, verbose=True)
