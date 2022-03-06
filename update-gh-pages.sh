@@ -16,6 +16,7 @@ python3 ethereum_stats.py
 python3 contracts_history.py \
     --prefix "nft" \
     --verbose \
+    data/contracts.json \
     data/nifty-gateway-contracts.json \
     data/foundation-contracts.json \
     data/other-nft-dapps.json
