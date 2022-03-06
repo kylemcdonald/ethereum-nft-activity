@@ -7,20 +7,24 @@ These questions do not have clear answers for two reasons:
 1. The overall energy usage and emissions of Ethereum are hard to estimate. I am working on this in a separate repo: [kylemcdonald/ethereum-energy](https://github.com/kylemcdonald/ethereum-energy)
 2. The portion for which a specific user, platform, or transaction might be considered "responsible" is more of a philosophical question than a technical one. Like many complex systems, there is an indirect relationship between the service and the emissions. I am working on different approaches in this notebook: [Per-Transaction Models](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/Per-Transaction%20Models.ipynb)
 
-This table represents one method for computing emissions, as of January 9, 2022. The methodology is described below.
+This table represents one method for computing emissions, as of March 5, 2022. The methodology is described below.
 
-| Name          | Fees      | Transactions | kgCO2     | 
-|---------------|-----------|--------------|-----------| 
-| Art Blocks    | 713.27    | 91861        | 1227523   | 
-| Async         | 209.69    | 26193        | 303379    | 
-| Foundation    | 7271.77   | 555013       | 12014180  | 
-| KnownOrigin   | 495.10    | 62940        | 877928    | 
-| Makersplace   | 1677.60   | 112881       | 2652522   | 
-| Nifty Gateway | 28146.03  | 1007846      | 43488939  | 
-| OpenSea       | 210924.13 | 14327923     | 359530331 | 
-| Rarible       | 20428.42  | 1755633      | 26793381  | 
-| SuperRare     | 1895.23   | 274409       | 2625774   | 
-| Zora          | 476.93    | 19547        | 616433    | 
+| Name          | Fees    | Transactions | kgCO2       |
+|---------------|---------|--------------|-------------|
+| Art Blocks    | 12,006  | 244,594      | 21,531,626  |
+| Async         | 224     | 27,403       | 332,657     |
+| Foundation    | 8,602   | 661,074      | 14,568,164  |
+| KnownOrigin   | 507     | 64,326       | 904,455     |
+| Makersplace   | 1,840   | 144,163      | 3,010,383   |
+| Nifty Gateway | 1,621   | 151,950      | 2,385,675   |
+| OpenSea       | 314,515 | 20,012,086   | 551,268,013 |
+| Rarible       | 20,930  | 1,802,971    | 27,706,539  |
+| SuperRare     | 2,215   | 320,697      | 3,172,169   |
+| Zora          | 532     | 21,660       | 721,254     |
+
+Updates:
+
+* March 5, 2022: Missing contracts were added to Art Blocks and OpenSea, massively incresaing their totals. Duplicate contracts were removed remove Nifty Gateway, halving the totals. The contracts were duplicated because they were found both when scraping Nifty Gateway, and also when pulling labeled contracts from Etherscan.
 
 
 ## Preparation
