@@ -135,7 +135,10 @@ class Etherscan():
         self.fetch_transactions(address, verbose=verbose, **kwargs)
         return self.list_transactions(address)
 
-    def fetch_transactions_internal(self, address, endblock=None, verbose=False):
+    def fetch_transactions_internal(self, address, **kwargs):
+        return self.fetch_transactions_uncached(address, 'txlistinternal', **kwargs)
+
+    def fetch_transactions_uncached(self, address, action='txlist', endblock=None, verbose=False):
         all_transactions = []
         startblock = None
         while True:
@@ -143,7 +146,7 @@ class Etherscan():
                 print('startblock', startblock)
             
             # download transactions between startblock and endblock
-            transactions = self.fetch_transactions_in_range(address, startblock, endblock, action='txlistinternal')
+            transactions = self.fetch_transactions_in_range(address, startblock, endblock, action=action)
             all_transactions.extend(transactions)
 
             if verbose:
