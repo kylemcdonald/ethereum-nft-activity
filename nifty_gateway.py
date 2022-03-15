@@ -2,7 +2,7 @@ import requests
 import json
 import os
 from itertools import count
-from utils import valid_hash, prefix_contracts, generate_blocklist
+from utils import generate_blocklist
 
 def list_nifty_gateway(update=True, verbose=False):
     cache_fn = 'data/nifty-gateway-contracts.json'
