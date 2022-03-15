@@ -77,7 +77,7 @@ def valid_hash(hash, blocklist=[]):
 
 def prefix_contracts(prefix, contracts, blocklist=[]):
     filtered = filter(lambda e: valid_hash(e, blocklist), contracts)
-    prefixed = {f'{prefix}/{i}': e for i,e in enumerate(sorted(filtered))}
+    prefixed = {f'{prefix}/{i}': e for i,e in enumerate(filtered)}
     return prefixed
 
 # list all contracts that are already known to belong to other platforms
