@@ -48,6 +48,7 @@
   "Rarible/ERC721 Factory": "0x6d9dd3547baf4c190ab89e0103c363feaf325eca",
   "Rarible/ERC721 Sale": "0x131aebbfe55bca0c9eaad4ea24d386c5c082dd58",
   "Rarible/Exchange 1": "0xcd4ec7b66fbc029c116ba9ffb3e59351c20b5b06",
+  "Rarible/Exchange 2": "0x09eab21c40743b2364b94345419138ef80f39e30",
   "Rarible/Exchange Proxy": "0x9757f2d2b135150bbeb65308d4a91804107cd8d6",
   "Rarible/External Royalties": "0xea90cfad1b8e030b8fd3e63d22074e0aeb8e0dcd",
   "Rarible/MintableToken 1": "0xf79ab01289f85b970bf33f0543e41409ed2e1c1f",
