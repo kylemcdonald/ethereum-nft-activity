@@ -2,7 +2,7 @@ import requests
 import json
 import os
 from itertools import count
-from utils import generate_blocklist
+from utils import generate_blocklist, valid_hash
 
 def list_nifty_gateway(update=True, verbose=False):
     cache_fn = 'data/nifty-gateway-contracts.json'
@@ -36,9 +36,12 @@ def list_nifty_gateway(update=True, verbose=False):
                 contract = item['contractAddress']
                 url = item['storeURL']
                 key = 'Nifty Gateway/' + url
-                if contract in blocklist:
+                if not valid_hash(contract, blocklist):
                     print('skipping', key, contract)
-                    break
+                    if contract in cache:
+                        print('deleting old contract', contract)
+                        del cache[contract]
+                    continue
                 cache[contract] = key
         if verbose:
             print('Page', current_page, 'total', len(cache))
