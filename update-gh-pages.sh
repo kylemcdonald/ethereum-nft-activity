@@ -29,8 +29,10 @@ mkdir -p backup
 cp output/nft-* backup
 git reset --hard
 git checkout gh-pages
+git checkout --orphan flattened
 cp backup/nft-* output/
-git add -u output/
+rm -rf backup
+git add .
 git commit -m "update"
-git push origin gh-pages
+git push origin +flattened:gh-pages
 git checkout main
