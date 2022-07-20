@@ -1,4 +1,5 @@
 import requests
+from requests.adapters import HTTPAdapter, Retry
 import datetime
 import sqlite3
 import time
@@ -65,6 +66,11 @@ class Etherscan():
             ready_only = True
         flags = '?mode=ro' if read_only else ''
         self.db = sqlite3.connect(f'file:{db_file}{flags}', uri=True)
+
+        session = requests.Session()
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+        session.mount('https://', HTTPAdapter(max_retries=retries))
+        self.session = session
 
     def __del__(self):
         self.db.close()
@@ -205,7 +211,7 @@ class Etherscan():
             url += f'&startblock={startblock}'
         if endblock is not None:
             url += f'&endblock={endblock}'
-        response = requests.get(url)
+        response = self.session.get(url)
         try:
             result = response.json()['result']
             if 'rate limit' in result:
