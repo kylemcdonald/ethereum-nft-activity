@@ -29,6 +29,7 @@ mkdir -p backup
 cp output/nft-* backup
 git reset --hard
 git checkout gh-pages
+git branch -D flattened
 git checkout --orphan flattened
 cp backup/nft-* output/
 rm -rf backup
