@@ -1,0 +1,268 @@
+<head>
+    <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/6.7.0/d3.min.js"
+      integrity="sha512-cd6CHE+XWDQ33ElJqsi0MdNte3S+bQY819f7p3NUHgwQQLXSKjE4cPZTeGNI+vaxZynk1wVU3hoHmow3m089wA=="
+      crossorigin="anonymous"></script>
+  
+    <style>
+      * {
+        font-family: sans-serif;
+      }
+  
+      select, button {
+        margin: 0.1em;
+        font-size: 1em;
+      }
+  
+      .fullscreen {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+  
+      #plot {}
+  
+      #loading {
+        position: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.5);
+        font-size: 2em;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <h1>Ethereum NFT Activity / <a href="https://twitter.com/kcimc">@kcimc</a></h1>
+  
+    <p>This dashboard tracks the activity across <a href="https://github.com/kylemcdonald/cryptoart-footprint/blob/main/data/marketplaces-collectibles-games.json">75</a> major Ethereum NFT <a href="https://dappradar.com/rankings/category/marketplaces">marketplaces</a>, <a href="https://dappradar.com/rankings/category/collectibles">collectibles</a>, and <a href="https://dappradar.com/rankings/category/games">games</a> platforms.</p>
+    <p>Once a day, all activity on these contracts is downloaded from <a href="https://etherscan.io/">Etherscan</a>, along with <a href="https://etherscan.io/charts">statistics on Ethereum</a>, and summaries are calculated with <a href="https://github.com/kylemcdonald/ethereum-nft-activity">kylemcdonald/ethereum-nft-activity</a>.</p>
+    <p>The latest files are available at the following links: <a href="output/nft-percentages.csv">NFT activity percentages</a>, <a href="output/nft-tx-count.csv">NFT transactions</a> <a href="output/nft-tx-count-percentages.csv">(%)</a>, <a href="output/nft-gas.csv">NFT gas</a> <a href="output/nft-gas-percentages.csv">(%)</a>, <a href="output/nft-fees.csv">NFT fees</a> <a href="output/nft-fees-percentages.csv">(%)</a>.</p>
+    <h3>Why is this platform/contract included/missing?</h3>
+    <p>Please <a href="https://github.com/kylemcdonald/cryptoart-footprint">submit a pull request</a> for the changes you would like to see.</p>
+    <h3>Why doesn't the y-axis autoscale on stacked and monthly charts?</h3>
+    <p>This is long-standing <a href="https://github.com/plotly/plotly.js/issues/1876">open feature request</a> for plotly.js, so I only implemented the daily percent.</p>
+    <h3>Why does the data start in 2017 when the NFT standard <a href="https://eips.ethereum.org/EIPS/eip-721">was created in 2018</a>?</h3>
+    <p>Some contracts like CryptoKitties and CryptoPunks implemented NFTs before standardization.</p>
+  
+    <div id='buttons'>
+      <select id="duration" onchange="repressButton()">
+        <option value="daily">Daily</option>
+        <option value="monthly">Monthly</option>
+      </select>
+    </div>
+    <div id='plot' class='fullscreen'></div>
+    <div id='loading' class='fullscreen'>Loading...</div>
+  
+    <script>
+      function rowsToColumns(rows) {
+        const columns = {};
+        Object.keys(rows[0]).forEach(e => {
+          columns[e] = [];
+        });
+        // reverse the data here... to handle the reversed data
+        rows.forEach(row => {
+          for (const [key, value] of Object.entries(row)) {
+            columns[key].push(value);
+          }
+        })
+        return columns;
+      }
+  
+      function sum(arr) {
+        return arr.reduce((a, b) => a + b, 0);
+      }
+  
+      function mean(arr) {
+        return sum(arr) / arr.length;
+      }
+  
+      function groupByMonth(x, y, grouper=mean) {
+        let months = x.map(e => e.substring(0,7));
+        let grouped = {};
+        months.map((e,i) => {
+          if (!grouped[e]) {
+            grouped[e] = [];
+          } 
+          grouped[e].push(y[i]);  
+        })
+        let xOut = [];
+        let yOut = [];
+        for(const group in grouped) {
+          xOut.push(group);
+          yOut.push(grouper(grouped[group]));
+        }
+        return [xOut, yOut];
+      }
+  
+      // seems like this feature is not offered by plotly
+      // https://github.com/plotly/plotly.js/issues/1876
+      // https://community.plotly.com/t/update-y-axis-domain-when-zoomed-on-x-axis/2073/10
+      function attachRelayout(elementId) {
+        var myPlot = document.getElementById(elementId);
+        var isUnderRelayout = false;
+        myPlot.on('plotly_relayout', function (relayoutData) {
+  
+          if (isUnderRelayout != true) {
+            isUnderRelayout = true;
+  
+            let start = relayoutData['xaxis.range[0]'].substring(0,10) ;
+            let end = relayoutData['xaxis.range[1]'].substring(0,10) ;
+  
+            let highs = myPlot.data.map(data => {
+              let xstart = data.x.map(e => e == start).indexOf(true);
+              let xend = data.x.map(e => e == end).indexOf(true);
+              if (xend == -1) {
+                xend = data.x.length - 1;
+              }
+              if (xstart == -1) {
+                xstart = 0;
+              }
+              if (xend < xstart) {
+                [xstart, xend] = [xend, xstart];
+              }
+              let high = Math.max(...data.y.slice(xstart, xend));
+              return high;
+            })
+  
+            let low = 0;
+            let high = Math.max(...highs);
+  
+            let update = { 'yaxis.range': [low, high] };
+            Plotly.relayout(myPlot, update).then(() => { isUnderRelayout = false })
+          }
+        });
+      }
+  
+      async function loadPlot(options) {
+        const elementId = 'plot';
+        const loadingElt = document.getElementById('loading');
+        loadingElt.style.display = '';
+  
+        const fn = options.filename;
+        const title = options.title;
+        const percent = options.percent;
+  
+        const data = await d3.csv(fn);
+        const columns = rowsToColumns(data);
+        const index = 'Date';
+        let traces = [];
+        for (const [key, value] of Object.entries(columns)) {
+          if (key == index) {
+            continue;
+          }
+          let x = columns[index];
+          let y = value.map(e => +e);
+          if (options.group == 'month') {
+            [x,y] = groupByMonth(x, y, grouper=percent ? mean : sum);
+          }
+          const trace = {
+            x: x,
+            y: y,
+            type: 'scatter',
+            name: key
+          };
+          if (!percent) {
+            trace.mode = 'none';
+            trace.stackgroup = 'one';
+          }
+          traces.push([sum(y), trace])
+          // if (traces.length > 3) {
+          //   break;
+          // }
+        }
+  
+        let ordered = traces
+          .sort((a, b) => (b[0] - a[0]))
+          .map(e => e[1]);
+  
+        // only show top-40
+        ordered = ordered.slice(0, 40);
+  
+        // const min_val = '2020-01-01';
+        // const max_val = Date.now();
+  
+        const layout = {
+          title: title,
+          hovermode: 'closest',
+          yaxis: {
+            fixedrange: true
+          },
+          xaxis: {
+            // range: [min_val, max_val],
+            // fixedrange: true
+          },
+          font: {
+            family: 'sans-serif'
+          },
+          dragmode: 'pan',
+          // height: window.innerHeight
+        };
+  
+        if (percent) {
+          layout.yaxis.tickformat = ',.1%';
+          layout.yaxis.range = [0,0.5];
+        }
+  
+        const config = {
+          displaylogo: false,
+          responsive: true,
+          scrollZoom: true
+        };
+  
+        Plotly.newPlot(elementId, ordered, layout, config).then(() => {
+          loadingElt.style.display = 'none';
+          if (percent && !options.group) {
+            attachRelayout(elementId);
+          }
+        })
+      }
+  
+      const options = {
+        'NFT Percent of Ethereum Activity': {
+          filename: 'output/nft-percentages.csv',
+          percent: true
+        },
+        'NFT Transactions': {
+          filename: 'output/nft-tx-count.csv'
+        },
+        'NFT Gas': {
+          filename: 'output/nft-gas.csv'
+        },
+        'NFT Fees': {
+          filename: 'output/nft-fees.csv'
+        }
+      };
+  
+      let currentKey = 'NFT Percent of Ethereum Activity';
+      function pressButton(key) {
+        currentKey = key;
+        const args = {...options[key]};
+        args.title = key;
+        if (document.getElementById('duration').value == 'monthly') {
+          args.group = 'month';
+          args.title = 'Monthly ' + args.title;
+        } else {
+          args.title = 'Daily ' + args.title;
+        }
+        loadPlot(args);
+      }
+  
+      function repressButton() {
+        pressButton(currentKey);
+      }
+  
+      const buttons = document.getElementById('buttons');
+      for (const key in options) {
+        const button = document.createElement('button');
+        button.innerText = key;
+        button.onclick = () => { pressButton(key) };
+        buttons.append(button);
+      }
+  
+      repressButton();
+    </script>
+  
+  </body>
