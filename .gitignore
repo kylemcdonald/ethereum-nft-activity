@@ -1,0 +1,6 @@
+cache
+*.pyc
+env.json
+log.txt
+backup
+*.sqlite3
