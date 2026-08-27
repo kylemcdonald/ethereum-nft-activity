@@ -7,23 +7,24 @@ These questions do not have clear answers for two reasons:
 1. The overall energy usage and emissions of Ethereum are hard to estimate. I am working on this in a separate repo: [kylemcdonald/ethereum-energy](https://github.com/kylemcdonald/ethereum-energy)
 2. The portion for which a specific user, platform, or transaction might be considered "responsible" is more of a philosophical question than a technical one. Like many complex systems, there is an indirect relationship between the service and the emissions. I am working on different approaches in this notebook: [Per-Transaction Models](https://github.com/kylemcdonald/cryptoart-footprint/blob/main/Per-Transaction%20Models.ipynb)
 
-This table represents one method for computing emissions, as of March 5, 2022. The methodology is described below.
+This table represents one method for computing emissions through Ethereum's Merge on September 15, 2022. The methodology is described below.
 
-| Name          | Fees    | Transactions | kgCO2       |
-|---------------|---------|--------------|-------------|
-| Art Blocks    | 12,006  | 244,594      | 21,531,626  |
-| Async         | 224     | 27,403       | 332,657     |
-| Foundation    | 8,602   | 661,074      | 14,568,164  |
-| KnownOrigin   | 507     | 64,326       | 904,455     |
-| Makersplace   | 1,840   | 144,163      | 3,010,383   |
-| Nifty Gateway | 1,621   | 151,950      | 2,385,675   |
-| OpenSea       | 314,515 | 20,012,086   | 551,268,013 |
-| Rarible       | 20,930  | 1,802,971    | 27,706,539  |
-| SuperRare     | 2,215   | 320,697      | 3,172,169   |
-| Zora          | 532     | 21,660       | 721,254     |
+| Name          | Fees    | Transactions | kgCO2         |
+|---------------|---------|--------------|---------------|
+| Art Blocks    | 12,526  | 300,004      | 23,939,211    |
+| Async         | 242     | 30,686       | 412,413       |
+| Foundation    | 11,112  | 1,263,046    | 26,795,039    |
+| KnownOrigin   | 516     | 67,092       | 949,435       |
+| Makersplace   | 1,895   | 155,281      | 3,305,361     |
+| Nifty Gateway | 30,428  | 1,558,209    | 50,640,277    |
+| OpenSea       | 403,646 | 34,004,198   | 1,007,345,234 |
+| Rarible       | 18,297  | 1,704,903    | 26,665,217    |
+| SuperRare     | 2,299   | 343,439      | 3,626,142     |
+| Zora          | 780     | 54,487       | 2,384,153     |
 
 Updates:
 
+* August 27, 2026: All platforms were updated through Ethereum's Merge. Activity totals through September 14 come from the published [daily fees](https://raw.githubusercontent.com/kylemcdonald/ethereum-nft-activity/gh-pages/output/nft-fees.csv) and [daily transaction counts](https://raw.githubusercontent.com/kylemcdonald/ethereum-nft-activity/gh-pages/output/nft-tx-count.csv). Full-day emissions estimates combine each platform's [daily share of Ethereum transaction fees](https://raw.githubusercontent.com/kylemcdonald/ethereum-nft-activity/gh-pages/output/nft-fees-percentages.csv) with the [daily Ethereum emissions estimate](https://github.com/kylemcdonald/ethereum-emissions/blob/gh-pages/output/daily-ktco2.csv). September 15 uses activity from block 15,535,777 (the first block after midnight UTC) through block 15,537,393 (the final proof-of-work block). The 449.716392664 ETH in network fees during this interval provides the denominator for allocating that day's partial emissions estimate.
 * March 5, 2022: Missing contracts were added to Art Blocks and OpenSea, massively incresaing their totals. Duplicate contracts were removed remove Nifty Gateway, halving the totals. The contracts were duplicated because they were found both when scraping Nifty Gateway, and also when pulling labeled contracts from Etherscan.
 
 
